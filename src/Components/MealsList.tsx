@@ -1,18 +1,7 @@
 import React from "react";
 import { fetchMeals, insertMeals } from "@/utils/database";
 import Image from "next/image";
-
-type Meal = {
-  id: number; // Unique numeric ID
-  slug: string; // UUID for the slug
-  name: string; // Name of the dish (country or food name)
-  title: string; // Title or name of the dish
-  description: string; // Food description
-  summary: string; // Short summary (adjective)
-  creator: string; // Creator's full name
-  email: string; // Creator's email
-  image: string; // URL of the food image
-};
+import { Meal } from "@/types";
 
 type MealsListType = {
   meals?: Meal[];
@@ -54,16 +43,12 @@ const MealItem: React.FC<MealItemProps> = ({ meal: item }) => {
 
 // create a MealItem component
 
-const MealsList: React.FC<MealsListType> = async ({ meals = [], heading }) => {
-  const mealsData = (await fetchMeals()) as Meal[];
-
-  console.log(mealsData);
-
+const MealsList: React.FC<MealsListType> = ({ meals = [], heading }) => {
   return (
     <div>
       <h1>{heading}</h1>
       <div className="grid grid-cols-4 gap-4 sm: grid-cols-1  px-4">
-        {mealsData.map((meal) => (
+        {meals.map((meal) => (
           <MealItem meal={meal} key={meal.id} />
         ))}
       </div>
