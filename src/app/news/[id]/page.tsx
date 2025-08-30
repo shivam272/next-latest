@@ -11,7 +11,6 @@ const NewsDetailsPage = ({
   searchParams,
 }: INewPageDetailProps): JSX.Element => {
   const { id } = params;
-  console.log("ID:", id);
 
   if (id === "1") {
     notFound();
