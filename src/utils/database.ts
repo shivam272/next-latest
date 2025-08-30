@@ -30,5 +30,6 @@ export const fetchMeals = async (): Promise<any[]> => {
   //   db.prepare("DELETE FROM meals WHERE id = 1").run();
 
   //   insertMeals();
+  // throw new Error("sdjsfkjfd ");
   return db.prepare("SELECT * FROM meals").all();
 };

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Navbar } from "@/Components";
+import { Header } from "@/Components";
 
 export const metadata: Metadata = {
   title: "Next Js Application",
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
+        <Header />
         {children}
       </body>
     </html>

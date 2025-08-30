@@ -1,23 +1,29 @@
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 import MealsList from "@/Components/MealsList";
 import { fetchMeals } from "@/utils/database";
 import { Meal } from "@/types";
 
-const Meals: React.FC = async () => {
+const MealsDataComponent = async () => {
   const mealsData = (await fetchMeals()) as Meal[];
+  return <MealsList heading="Meals list" meals={mealsData} />;
+};
+
+const Meals: React.FC = async () => {
   return (
     <div>
-      <div>Meals page</div>
+      <h1>This is a heading</h1>
       <Link href="/meals/share" className="text-blue-500 hover:underline">
         Meals share
       </Link>
       <Link href={`/meals/${2342}`} className="text-blue-500 hover:underline">
         Meals Details
       </Link>
-      <div>
-        <MealsList heading="Meals list" meals={mealsData} />
-      </div>
+      <Suspense
+        fallback={<div className="flex flex-center">Loading suspense ...</div>}
+      >
+        <MealsDataComponent />
+      </Suspense>
     </div>
   );
 };

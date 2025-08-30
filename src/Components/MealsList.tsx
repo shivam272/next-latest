@@ -1,10 +1,10 @@
 import React from "react";
-import { fetchMeals, insertMeals } from "@/utils/database";
+import latopImg from "../../public/laptop.jpg";
 import Image from "next/image";
 import { Meal } from "@/types";
 
 type MealsListType = {
-  meals?: Meal[];
+  meals: Meal[];
   heading: string;
 };
 
@@ -15,12 +15,10 @@ type MealItemProps = {
 const MealItem: React.FC<MealItemProps> = ({ meal: item }) => {
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <img
+      <Image
         className="w-full h-48 object-cover"
-        src={item.image}
+        src={latopImg}
         alt={item.title}
-        width={100}
-        height={100}
       />
       <div className="p-4">
         <h3 className="text-xl font-semibold text-gray-800">{item.title}</h3>
@@ -46,7 +44,7 @@ const MealItem: React.FC<MealItemProps> = ({ meal: item }) => {
 const MealsList: React.FC<MealsListType> = ({ meals = [], heading }) => {
   return (
     <div>
-      <h1>{heading}</h1>
+      <h1 className="text-4xl text-center"> {heading}</h1>
       <div className="grid grid-cols-4 gap-4 sm: grid-cols-1  px-4">
         {meals.map((meal) => (
           <MealItem meal={meal} key={meal.id} />

@@ -9,3 +9,14 @@ export type Meal = {
   email: string; // Creator's email
   image: string; // URL of the food image
 };
+
+export type TNewsArticle = {
+  id: string; // Unique string ID
+  title: string; // Title of the news article
+  date: string; // Publication date in YYYY-MM-DD format
+  image: string; // URL of the news image
+  source: string; // Source of the news article
+  content: string; // Full content of the news article
+  author: string; // Author of the news article
+  category: string; // Category of the news article
+};
