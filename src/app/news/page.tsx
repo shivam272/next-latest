@@ -1,5 +1,5 @@
 import { NEWS_DATA } from "@/constants/data";
-import { NewsList } from "@/Components";
+import { NewsList } from "@/components";
 
 const NewsPage: React.FC = () => {
   return (

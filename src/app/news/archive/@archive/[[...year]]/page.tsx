@@ -1,5 +1,5 @@
 import { getNewsByYear, getYearsArr } from "@/utils/actions";
-import { NewsList } from "@/Components";
+import { NewsList } from "@/components";
 import { NEWS_DATA } from "@/constants/data";
 import Link from "next/link";
 import { JSX } from "react";

@@ -1,4 +1,4 @@
-import { NewsList } from "@/Components";
+import { NewsList } from "@/components";
 import { getNewsByYear } from "@/utils/actions";
 import { NEWS_DATA } from "@/constants/data";
 

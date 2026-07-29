@@ -21,6 +21,11 @@ const Header: React.FC = () => {
               Contact
             </Link>
           </li>
+          <li>
+            <Link href="/register" className="text-white hover:underline">
+              Register
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>
