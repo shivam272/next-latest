@@ -1,5 +1,6 @@
 import db, { insertMeal } from "../../initdb";
 import { faker } from "@faker-js/faker";
+import { Meal } from "@/types";
 
 export const insertMeals = async () => {
   await new Promise((res) => {
@@ -20,7 +21,7 @@ export const insertMeals = async () => {
   });
 };
 
-export const fetchMeals = async (): Promise<any[]> => {
+export const fetchMeals = async (): Promise<Meal[]> => {
   await new Promise((res) => {
     setTimeout(() => {
       res(23);
@@ -31,5 +32,5 @@ export const fetchMeals = async (): Promise<any[]> => {
 
   //   insertMeals();
   // throw new Error("sdjsfkjfd ");
-  return db.prepare("SELECT * FROM meals").all();
+  return db.prepare("SELECT * FROM meals").all() as Meal[];
 };

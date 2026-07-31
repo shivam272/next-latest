@@ -1,10 +1,10 @@
-// "use client";
+"use client";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const About: React.FC = (props) => {
-  //   const path = usePathname();
-  console.log(props);
+const About: React.FC = () => {
+  const path = usePathname();
+  console.log(path);
   return (
     <div>
       <h1>About Page</h1>

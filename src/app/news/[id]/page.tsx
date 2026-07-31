@@ -2,15 +2,13 @@ import { notFound } from "next/navigation";
 import { JSX } from "react";
 
 interface INewPageDetailProps {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
 }
 
-const NewsDetailsPage = ({
+const NewsDetailsPage = async ({
   params,
-  searchParams,
-}: INewPageDetailProps): JSX.Element => {
-  const { id } = params;
+}: INewPageDetailProps): Promise<JSX.Element> => {
+  const { id } = await params;
 
   if (id === "1") {
     notFound();

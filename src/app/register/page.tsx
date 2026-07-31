@@ -1,5 +1,11 @@
+import { FormComp } from "@/components";
+
 const RegisterPage = () => {
-  return <div>Register Page</div>;
+  return (
+    <div>
+      <FormComp />
+    </div>
+  );
 };
 
 export default RegisterPage;

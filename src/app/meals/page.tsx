@@ -2,10 +2,9 @@ import Link from "next/link";
 import React, { Suspense } from "react";
 import MealsList from "@/components/MealsList";
 import { fetchMeals } from "@/utils/database";
-import { Meal } from "@/types";
 
 const MealsDataComponent = async () => {
-  const mealsData = (await fetchMeals()) as Meal[];
+  const mealsData = await fetchMeals();
   return <MealsList heading="Meals list" meals={mealsData} />;
 };
 

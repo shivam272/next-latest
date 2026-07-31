@@ -6,7 +6,7 @@ import { JSX } from "react";
 
 interface INewsByYearProps {
   params?: Promise<{ year?: string[] }>;
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 const NewsByYear = async ({
