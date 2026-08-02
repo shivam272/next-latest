@@ -1,5 +1,6 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { useRef, useEffect } from "react";
+import { useForm, useFieldArray, type FieldErrors } from "react-hook-form";
 
 enum EGenderEnum {
   female = "female",
@@ -8,6 +9,7 @@ enum EGenderEnum {
 }
 
 interface IFormInput {
+  age: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -16,25 +18,54 @@ interface IFormInput {
   confirmPassword: string;
   terms: boolean;
   phone: string[];
+  cities: {
+    name: string;
+  }[];
 }
 
 export const FormComp = () => {
   const {
+    control,
     reset,
+    trigger,
     watch,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, touchedFields, dirtyFields, isDirty },
   } = useForm<IFormInput>({
     defaultValues: {
       terms: true,
       phone: ["", ""],
+      cities: [
+        {
+          name: "",
+        },
+      ],
     },
+    mode: "onTouched",
+  });
+  const renderCount = useRef(0);
+
+  renderCount.current++;
+
+  console.log(renderCount.current);
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "cities",
   });
 
   const onSubmitHandler = (data: IFormInput) => {
-    console.log(data);
-    reset();
+    console.log(data, errors);
+  };
+
+  const onErrorHandler = (errors: FieldErrors<IFormInput>) => {
+    // it will trigger if form has an error
+    console.log(errors);
+  };
+
+  const getLogs = () => {
+    console.log(touchedFields, dirtyFields);
   };
 
   const currentPassword = watch("password");
@@ -45,10 +76,10 @@ export const FormComp = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         className="w-full max-w-xl bg-white p-8 rounded-xl shadow-md space-y-5"
-        onSubmit={handleSubmit(onSubmitHandler)}
+        onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
         noValidate
       >
-        {/* First Name & Last Name Side-by-Side */}
+        {/* name */}
         <div className="flex gap-4">
           <div className="w-1/2">
             <label
@@ -70,6 +101,7 @@ export const FormComp = () => {
             )}
           </div>
 
+          {/* lastname */}
           <div className="w-1/2">
             <label
               htmlFor="lastName"
@@ -105,7 +137,7 @@ export const FormComp = () => {
           </div>
         </div>
 
-        {/* Email */}
+        {/* email  */}
         <div>
           <label
             htmlFor="email"
@@ -128,6 +160,50 @@ export const FormComp = () => {
           {errors.email && (
             <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
           )}
+        </div>
+
+        {/* cities */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Add Cities
+          </label>
+          <div className="flex flex-col gap-4">
+            {fields.map((field, index) => {
+              return (
+                <div key={field.id}>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      {...register(`cities.${index}.name`, {
+                        required: "City is a required field",
+                      })}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    />
+                    <button
+                      disabled={fields.length === 1}
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="rounded-md bg-red-600 text-white font-medium hover:bg-red-700 transition-colors p-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400 disabled:opacity-60"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  {errors.cities?.[index]?.name && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.cities[index].name.message}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <button
+            type="button"
+            onClick={() => append({ name: "" })}
+            className="w-1/2 rounded-md bg-green-600 text-white font-medium hover:bg-green-700 transition-colors p-2 mt-4"
+          >
+            Add
+          </button>
         </div>
 
         {/* Password & Confirm Password Side-by-Side (Optional example) */}
@@ -199,7 +275,7 @@ export const FormComp = () => {
               {...register("phone.0", {
                 required: "Primary phone is required",
                 pattern: {
-                  value: /^[6-9]\d{9}$/,
+                  value: /^[0-9]\d{2}$/,
                   message: "Enter a valid 10-digit mobile number",
                 },
               })}
@@ -225,7 +301,7 @@ export const FormComp = () => {
               placeholder="9876543210"
               {...register("phone.1", {
                 pattern: {
-                  value: /^[6-9]\d{9}$/,
+                  value: /^[0-9]\d{2}$/,
                   message: "Enter a valid 10-digit mobile number",
                 },
                 validate: (value) =>
@@ -243,23 +319,59 @@ export const FormComp = () => {
           </div>
         </div>
 
-        {/* Gender Selection */}
-        <div>
-          <label
-            htmlFor="gender"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Choose a Gender
-          </label>
-          <select
-            id="gender"
-            {...register("gender")}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-          >
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
+        {/* Gender Selection & age */}
+        <div className="flex gap-4">
+          <div className="w-1/2">
+            <label
+              htmlFor="gender"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Choose a Gender
+            </label>
+            <select
+              id="gender"
+              {...register("gender")}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div className="w-1/2">
+            <label
+              htmlFor="age"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Age
+            </label>
+            <input
+              type="number"
+              id="age"
+              placeholder="type your age"
+              {...register("age", {
+                required: "Age is required",
+                valueAsNumber: true,
+                validate: {
+                  negativeAge: (value) => {
+                    if (value < 0) {
+                      return "Age can't be negative";
+                    }
+                  },
+                  minAge: (value) => {
+                    if (value < 18) {
+                      return "Age should be minimum 18";
+                    }
+                  },
+                },
+              })}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            />
+            {errors.age && (
+              <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>
+            )}
+          </div>
         </div>
 
         {/* Terms and Conditions */}
@@ -285,14 +397,39 @@ export const FormComp = () => {
         </div>
 
         {/* Submit Button */}
-        <button
-          disabled={!currentTerms}
-          type="submit"
-          className="w-full rounded-md bg-blue-600 py-2 text-white font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400 disabled:opacity-60"
-        >
-          Submit
-        </button>
+        <div className="grid grid-cols-3 gap-4">
+          <button
+            disabled={!currentTerms || !isDirty}
+            type="submit"
+            className="w-full rounded-md bg-blue-600 py-2 text-white font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400 disabled:opacity-60"
+          >
+            Submit
+          </button>
+          <button
+            onClick={getLogs}
+            type="button"
+            className="w-full rounded-md bg-sky-600 py-2 text-white font-medium hover:bg-sky-700 transition-colors"
+          >
+            Logs
+          </button>
+          <button
+            onClick={() => reset()}
+            type="button"
+            className="w-full rounded-md bg-sky-600 py-2 text-white font-medium hover:bg-sky-700 transition-colors"
+          >
+            Reset
+          </button>
+          <button
+            onClick={() => trigger()}
+            type="button"
+            className="w-full rounded-md bg-fuchsia-600 py-2 text-white font-medium hover:bg-fuchsia-700 transition-colors"
+          >
+            Validate
+          </button>
+        </div>
       </form>
     </div>
   );
 };
+
+// isDirty helps to check if user has interacted with the form
