@@ -6,8 +6,8 @@ const App = () => {
       <NextLink href="/meals" className="text-blue-500 hover:underline">
         Meals page
       </NextLink>
-      <NextLink href="/community" className="text-blue-500 hover:underline">
-        Community
+      <NextLink href="/signIn" className="text-blue-500 hover:underline">
+        Sign In
       </NextLink>
       <div className="flex flex-col items-center justify-center">
         <span>Random Content </span>

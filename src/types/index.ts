@@ -20,3 +20,29 @@ export type TNewsArticle = {
   author: string; // Author of the news article
   category: string; // Category of the news article
 };
+export enum EGenderEnum {
+  female = "female",
+  male = "male",
+  other = "other",
+}
+
+export interface IFormInput {
+  age: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: EGenderEnum;
+  password: string;
+  confirmPassword: string;
+  terms: boolean;
+  phone: string[];
+  cities: {
+    name: string;
+  }[];
+}
+
+export interface IAccountInput {
+  email: string;
+  password: string;
+  name: string;
+}

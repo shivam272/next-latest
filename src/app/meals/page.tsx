@@ -1,12 +1,6 @@
 import Link from "next/link";
 import React, { Suspense } from "react";
 import MealsList from "@/components/MealsList";
-import { fetchMeals } from "@/utils/database";
-
-const MealsDataComponent = async () => {
-  const mealsData = await fetchMeals();
-  return <MealsList heading="Meals list" meals={mealsData} />;
-};
 
 const Meals: React.FC = async () => {
   return (
@@ -21,7 +15,7 @@ const Meals: React.FC = async () => {
       <Suspense
         fallback={<div className="flex flex-center">Loading suspense ...</div>}
       >
-        <MealsDataComponent />
+        <MealsList heading="Meals list" meals={[]} />
       </Suspense>
     </div>
   );

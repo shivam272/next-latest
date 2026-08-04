@@ -1,27 +1,11 @@
 "use client";
-import { useRef, useEffect } from "react";
+
 import { useForm, useFieldArray, type FieldErrors } from "react-hook-form";
-
-enum EGenderEnum {
-  female = "female",
-  male = "male",
-  other = "other",
-}
-
-interface IFormInput {
-  age: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  gender: EGenderEnum;
-  password: string;
-  confirmPassword: string;
-  terms: boolean;
-  phone: string[];
-  cities: {
-    name: string;
-  }[];
-}
+import { type IFormInput } from "@/types";
+import { toast } from "react-toastify";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { signOut } from "@/actions/server";
 
 export const FormComp = () => {
   const {
@@ -44,19 +28,34 @@ export const FormComp = () => {
     },
     mode: "onTouched",
   });
-  const renderCount = useRef(0);
 
-  renderCount.current++;
+  const sessionData = useSession();
 
-  console.log(renderCount.current);
+  const router = useRouter();
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "cities",
   });
 
-  const onSubmitHandler = (data: IFormInput) => {
-    console.log(data, errors);
+  const onSubmitHandler = async (data: IFormInput) => {
+    const res = await fetch("api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const content = await res.json();
+
+    console.log(content);
+
+    if (content.status <= 201) {
+      toast.success(content.message);
+    } else {
+      toast.error(content.message);
+    }
   };
 
   const onErrorHandler = (errors: FieldErrors<IFormInput>) => {
@@ -64,8 +63,26 @@ export const FormComp = () => {
     console.log(errors);
   };
 
-  const getLogs = () => {
-    console.log(touchedFields, dirtyFields);
+  const dummyApiTrigger = async () => {
+    const res = await fetch("https://jsonplaceholder.typicode.com/users/1");
+
+    const content = await res.json();
+
+    console.log(content);
+  };
+
+  const signOutHandler = async () => {
+    const response = await signOut();
+    if (!response.success) {
+      toast.error(response.message);
+      return;
+    }
+    toast.success(response.message);
+    router.push("/signIn");
+  };
+
+  const getLogsAndSession = () => {
+    console.log(touchedFields, dirtyFields, sessionData);
   };
 
   const currentPassword = watch("password");
@@ -406,7 +423,7 @@ export const FormComp = () => {
             Submit
           </button>
           <button
-            onClick={getLogs}
+            onClick={getLogsAndSession}
             type="button"
             className="w-full rounded-md bg-sky-600 py-2 text-white font-medium hover:bg-sky-700 transition-colors"
           >
@@ -426,10 +443,26 @@ export const FormComp = () => {
           >
             Validate
           </button>
+          <button
+            onClick={() => {
+              void dummyApiTrigger();
+            }}
+            type="button"
+            className="w-full rounded-md bg-gray-600 py-2 text-white font-medium hover:bg-gray-700 transition-colors"
+          >
+            DummyApi
+          </button>
+          {sessionData.data && (
+            <button
+              onClick={signOutHandler}
+              type="button"
+              className="w-full rounded-md bg-pink-600 py-2 text-white font-medium hover:bg-pink-700 transition-colors"
+            >
+              SignOut
+            </button>
+          )}
         </div>
       </form>
     </div>
   );
 };
-
-// isDirty helps to check if user has interacted with the form

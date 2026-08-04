@@ -16,9 +16,9 @@ const Header: React.FC = () => {
               Archive
             </Link>
           </li>
-          <li className="pointer-events-none opacity-50">
-            <Link href="/contact" className="text-white hover:underline">
-              Contact
+          <li>
+            <Link href="/signIn" className="text-white hover:underline">
+              Sign In
             </Link>
           </li>
           <li>
