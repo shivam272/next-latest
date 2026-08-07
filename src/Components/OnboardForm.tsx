@@ -186,6 +186,17 @@ export const OnboardForm = () => {
             )}
           </div>
 
+          {!isSignUp && (
+            <div className="flex justify-end">
+              <a
+                href="/signIn/reset-password"
+                className="text-sm font-medium text-blue-400 transition hover:text-blue-300"
+              >
+                Forgot Password?
+              </a>
+            </div>
+          )}
+
           {authError && (
             <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
               {authError}

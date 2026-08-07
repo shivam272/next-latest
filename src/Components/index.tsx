@@ -3,5 +3,15 @@ import Header from "./Header";
 import NewsList from "./NewsList";
 import { FormComp } from "./Form";
 import { OnboardForm } from "./OnboardForm";
+import { ForgotPasswordForm } from "./ForgotPassword";
+import { EnterPasswordForm } from "./EnterPasswordForm";
 
-export { Navbar, Header, NewsList, FormComp, OnboardForm };
+export {
+  Navbar,
+  Header,
+  NewsList,
+  FormComp,
+  OnboardForm,
+  ForgotPasswordForm,
+  EnterPasswordForm,
+};

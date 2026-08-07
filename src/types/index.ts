@@ -46,3 +46,7 @@ export interface IAccountInput {
   password: string;
   name: string;
 }
+
+export enum ETokenType {
+  INVALID_TOKEN = "INVALID_TOKEN",
+}
