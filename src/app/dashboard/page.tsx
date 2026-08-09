@@ -1,7 +1,11 @@
+import { Accordion } from "@/components/Ui";
 const DashboardPage: React.FC = () => {
   return (
     <div>
-      <h1>DashboardPage</h1>
+      <div className="my-3">
+        <h1>Some contnent</h1>
+        <Accordion />
+      </div>
     </div>
   );
 };

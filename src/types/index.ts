@@ -1,3 +1,5 @@
+// import { Types } from "mongoose";
+
 export type Meal = {
   id: number; // Unique numeric ID
   slug: string; // UUID for the slug
@@ -49,4 +51,34 @@ export interface IAccountInput {
 
 export enum ETokenType {
   INVALID_TOKEN = "INVALID_TOKEN",
+}
+
+export interface IVenueInput {
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  capacity: string;
+  amenities: {
+    name: string;
+  }[];
+}
+
+export interface IEventInput {
+  name: string;
+  description: string;
+  date: string;
+  time: string;
+  venueId: string;
+  organizer: string;
+  artist: string;
+  capacity: string;
+  price: string;
+  ageRestriction: string;
+  duration: string;
+  addOns: {
+    name: string;
+  }[];
 }

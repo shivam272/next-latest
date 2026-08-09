@@ -5,6 +5,8 @@ import { FormComp } from "./Form";
 import { OnboardForm } from "./OnboardForm";
 import { ForgotPasswordForm } from "./ForgotPassword";
 import { EnterPasswordForm } from "./EnterPasswordForm";
+import { VenueForm } from "./VenueForm";
+import { EventForm } from "./EventForm";
 
 export {
   Navbar,
@@ -14,4 +16,6 @@ export {
   OnboardForm,
   ForgotPasswordForm,
   EnterPasswordForm,
+  VenueForm,
+  EventForm,
 };

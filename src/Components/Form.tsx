@@ -90,7 +90,7 @@ export const FormComp = () => {
   const [primaryPhone] = watch("phone");
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center">
       <form
         className="w-full max-w-xl bg-white p-8 rounded-xl shadow-md space-y-5"
         onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}

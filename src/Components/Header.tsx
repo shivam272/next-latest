@@ -1,33 +1,40 @@
-import Link from "next/link";
+import { MegaMenu } from "./Ui";
 
-const Header: React.FC = () => {
+const menuGroups = [
+  {
+    label: "Services",
+    id: "services",
+    items: [
+      { label: "Dashboard", href: "/" },
+      { label: "Create Venue", href: "/dashboard/create-venue" },
+      { label: "Create Event", href: "/dashboard/create-event" },
+    ],
+  },
+  {
+    label: "Account",
+    id: "account",
+    items: [
+      { label: "Home", href: "/" },
+      { label: "Archive", href: "/news/archive" },
+      { label: "Sign In", href: "/signIn" },
+      { label: "Register", href: "/register" },
+    ],
+  },
+];
+
+interface IHeaderProps {
+  className?: string;
+}
+
+const Header: React.FC<IHeaderProps> = ({ className = "" }) => {
   return (
-    <header className="bg-blue-600 text-white p-4 flex justify-between items-center">
+    <header
+      className={`bg-blue-600 text-white py-3 px-6 flex justify-between items-center ${className}`}
+    >
       <h1 className="text-2xl font-bold">News Application</h1>
-      <nav>
-        <ul className="flex space-x-4">
-          <li>
-            <Link href="/news" className="text-white hover:underline">
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link href="/news/archive" className="text-white hover:underline">
-              Archive
-            </Link>
-          </li>
-          <li>
-            <Link href="/signIn" className="text-white hover:underline">
-              Sign In
-            </Link>
-          </li>
-          <li>
-            <Link href="/register" className="text-white hover:underline">
-              Register
-            </Link>
-          </li>
-        </ul>
-      </nav>
+      <div>
+        <MegaMenu id="event" menuGroups={menuGroups} />
+      </div>
     </header>
   );
 };

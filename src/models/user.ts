@@ -1,7 +1,7 @@
-import { Schema, models, model, InferSchemaType } from "mongoose";
+import { Schema, models, model } from "mongoose";
 import { type IFormInput, EGenderEnum } from "@/types";
 
-const UserSchema = new Schema<IFormInput>(
+const user = new Schema<IFormInput>(
   {
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
@@ -58,4 +58,4 @@ const UserSchema = new Schema<IFormInput>(
 );
 
 // to check if the model is already compiled, if not compile it
-export default models.User || model<IFormInput>("User", UserSchema);
+export default models.User || model<IFormInput>("User", user);
