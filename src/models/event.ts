@@ -1,7 +1,7 @@
 import { Schema, models, model } from "mongoose";
-import { type IEventInput } from "@/types/index";
+import { type IEventInputSchema } from "@/types/index";
 
-const event = new Schema<IEventInput>(
+const event = new Schema<IEventInputSchema>(
   {
     name: {
       type: String,
@@ -23,13 +23,8 @@ const event = new Schema<IEventInput>(
       required: true,
       trim: true,
     },
-    // venueId: {
-    //   type: Schema.Types.ObjectId,
-    //   ref: "Venue",
-    //   required: true,
-    // },
     venueId: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: "Venue",
       required: true,
     },
@@ -77,4 +72,4 @@ const event = new Schema<IEventInput>(
   },
 );
 
-export default models.Event || model<IEventInput>("Event", event);
+export default models.Event || model<IEventInputSchema>("Event", event);

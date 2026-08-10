@@ -1,10 +1,10 @@
-import { Accordion } from "@/components/Ui";
+import { VenueList } from "@/components";
+
 const DashboardPage: React.FC = () => {
   return (
     <div>
       <div className="my-3">
-        <h1>Some contnent</h1>
-        <Accordion />
+        <VenueList />
       </div>
     </div>
   );

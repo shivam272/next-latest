@@ -45,7 +45,7 @@ const MealsList: React.FC<MealsListType> = ({ meals = [], heading }) => {
   return (
     <div>
       <h1 className="text-4xl text-center"> {heading}</h1>
-      <div className="grid grid-cols-4 gap-4 sm: grid-cols-1  px-4">
+      <div className="grid grid-cols-4 gap-4 sm:grid-cols-1 px-4">
         {meals.map((meal) => (
           <MealItem meal={meal} key={meal.id} />
         ))}

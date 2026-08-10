@@ -5,9 +5,8 @@ const menuGroups = [
     label: "Services",
     id: "services",
     items: [
-      { label: "Dashboard", href: "/" },
+      { label: "Dashboard", href: "/dashboard" },
       { label: "Create Venue", href: "/dashboard/create-venue" },
-      { label: "Create Event", href: "/dashboard/create-event" },
     ],
   },
   {

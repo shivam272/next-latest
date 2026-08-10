@@ -1,4 +1,4 @@
-// import { Types } from "mongoose";
+import { Types } from "mongoose";
 
 export type Meal = {
   id: number; // Unique numeric ID
@@ -71,7 +71,6 @@ export interface IEventInput {
   description: string;
   date: string;
   time: string;
-  venueId: string;
   organizer: string;
   artist: string;
   capacity: string;
@@ -81,4 +80,8 @@ export interface IEventInput {
   addOns: {
     name: string;
   }[];
+}
+
+export interface IEventInputSchema extends IEventInput {
+  venueId: Types.ObjectId;
 }

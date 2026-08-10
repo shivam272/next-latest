@@ -2,10 +2,14 @@
 import { useForm, useFieldArray, type FieldErrors } from "react-hook-form";
 import { type IEventInput } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { eventSchema } from "@/schema";
+import { eventSchemaClient } from "@/schema";
 import { toast } from "react-toastify";
 
-export const EventForm = () => {
+interface EventFormProps {
+  venueId: string;
+}
+
+export const EventForm: React.FC<EventFormProps> = ({ venueId }) => {
   const {
     control,
     reset,
@@ -13,7 +17,7 @@ export const EventForm = () => {
     register,
     handleSubmit,
     formState: { errors, isDirty, isValid, isSubmitting },
-  } = useForm<Omit<IEventInput, "venueId">>({
+  } = useForm<IEventInput>({
     defaultValues: {
       name: "",
       description: "",
@@ -31,7 +35,7 @@ export const EventForm = () => {
         },
       ],
     },
-    resolver: zodResolver(eventSchema),
+    resolver: zodResolver(eventSchemaClient),
     mode: "onTouched",
   });
 
@@ -40,24 +44,24 @@ export const EventForm = () => {
     name: "addOns",
   });
 
-  const onSubmitHandler = async (data: Omit<IEventInput, "venueId">) => {
-    console.log("Event Data:", data);
-    // const res = await fetch("/api/dashboard/create-event", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(data),
-    // });
+  const onSubmitHandler = async (data: IEventInput) => {
+    const eventData = { ...data, venueId };
+    const res = await fetch("/api/dashboard/create-event", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(eventData),
+    });
 
-    // const content = await res.json();
+    const content = await res.json();
 
-    // if (content.status <= 201) {
-    //   toast.success(content.message);
-    //   reset();
-    // } else {
-    //   toast.error(content.message);
-    // }
+    if (content.status <= 201) {
+      toast.success(content.message);
+      reset();
+    } else {
+      toast.error(content.message);
+    }
   };
 
   const getErrors = () => {

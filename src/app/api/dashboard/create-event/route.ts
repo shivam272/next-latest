@@ -1,5 +1,6 @@
 import { createEvent } from "@/services";
-import { eventSchema } from "@/schema";
+import { eventSchemaServer } from "@/schema";
+import { Types } from "mongoose";
 
 const errorResponse = {
   registeredSuccessfully: {
@@ -19,16 +20,19 @@ const errorResponse = {
 export const POST = async (req: Request): Promise<Response> => {
   const body = await req.json();
 
-  const validationResult = eventSchema.safeParse(body);
+  const validationResult = eventSchemaServer.safeParse(body);
 
   if (!validationResult.success) {
     return Response.json({ ...errorResponse.typeErrorValidation });
   }
 
-  const secureData = validationResult.data;
+  const { venueId, ...secureData } = validationResult.data;
 
   try {
-    await createEvent(secureData);
+    await createEvent({
+      ...secureData,
+      venueId: new Types.ObjectId(venueId),
+    });
     return Response.json({ ...errorResponse.registeredSuccessfully });
   } catch {
     return Response.json({ ...errorResponse.errorRegisteringEvent });

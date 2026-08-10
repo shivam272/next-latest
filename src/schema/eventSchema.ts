@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const eventSchema = z.object({
+export const eventSchemaClient = z.object({
   name: z
     .string()
     .trim()
@@ -29,7 +29,6 @@ export const eventSchema = z.object({
   time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
     message: "Invalid time format (HH:mm)",
   }),
-  // venueId: z.string().trim().min(1, "Venue ID is required"),
   organizer: z
     .string()
     .trim()
@@ -79,4 +78,11 @@ export const eventSchema = z.object({
       name: z.string().trim().min(1, "Add-on name is required"),
     }),
   ),
+});
+
+export const eventSchemaServer = eventSchemaClient.extend({
+  venueId: z
+    .string()
+    .trim()
+    .regex(/^[a-f\d]{24}$/i, "Invalid venue ID format"),
 });

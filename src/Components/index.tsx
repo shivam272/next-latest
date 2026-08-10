@@ -7,6 +7,7 @@ import { ForgotPasswordForm } from "./ForgotPassword";
 import { EnterPasswordForm } from "./EnterPasswordForm";
 import { VenueForm } from "./VenueForm";
 import { EventForm } from "./EventForm";
+import { VenueList } from "./VenueList";
 
 export {
   Navbar,
@@ -18,4 +19,5 @@ export {
   EnterPasswordForm,
   VenueForm,
   EventForm,
+  VenueList,
 };

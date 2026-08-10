@@ -7,7 +7,20 @@ export const createVenue = async (data: IVenueInput) => {
   return Venue.create(data);
 };
 
-export const getAllVenues = async () => {
+export const getAllVenues = async (): Promise<
+  (IVenueInput & { id: string })[]
+> => {
   await connectToDatabase();
-  return Venue.find({}).lean().exec();
+  const venues = await Venue.find({}).lean().exec();
+  return venues.map((venue: any) => ({
+    name: venue.name,
+    country: venue.country,
+    address: venue.address,
+    amenities: venue.amenities,
+    city: venue.city,
+    state: venue.state,
+    zipCode: venue.zipCode,
+    capacity: venue.capacity,
+    id: venue._id.toString(),
+  }));
 };

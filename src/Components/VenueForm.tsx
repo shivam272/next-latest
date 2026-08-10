@@ -4,6 +4,7 @@ import { type IVenueInput } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { venueSchema } from "@/schema";
 import { toast } from "react-toastify";
+import { redirect } from "next/navigation";
 
 export const VenueForm = () => {
   const {
@@ -49,6 +50,7 @@ export const VenueForm = () => {
     if (content.status <= 201) {
       toast.success(content.message);
       reset();
+      redirect("/dashboard");
     } else {
       toast.error(content.message);
     }
@@ -57,20 +59,6 @@ export const VenueForm = () => {
   const onErrorHandler = (errors: FieldErrors<IVenueInput>) => {
     // if there is a issue in the form, show a toast notification
     toast.error("Please fix the errors in the form");
-  };
-
-  const getAllVenues = async () => {
-    try {
-      const res = await fetch("/api/dashboard/create-venue");
-      const { data, status, message } = await res.json();
-      if (status === 200) {
-        console.log("Venues fetched:", data);
-      } else {
-        toast.error(message);
-      }
-    } catch (error) {
-      toast.error("Error fetching venues");
-    }
   };
 
   return (
@@ -308,14 +296,6 @@ export const VenueForm = () => {
                 className="btn btn-primary"
               >
                 Create Venue
-              </button>
-              <button
-                onClick={getAllVenues}
-                // disabled={!isValid || isSubmitting}
-                type="button"
-                className="btn btn-primary"
-              >
-                Get All Venues
               </button>
             </div>
           </div>
