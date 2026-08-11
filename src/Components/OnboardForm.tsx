@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  signInEmail,
-  signUpEmail,
-  signInWithGithub,
-  signInWithGoogle,
-} from "@/actions/server";
+import { signInEmail, signUpEmail } from "@/actions/server";
 import { toast } from "react-toastify";
 import { redirect } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
@@ -36,35 +31,34 @@ export const OnboardForm = () => {
 
   // server action not preferred for OAuth
 
-  const signInWithGithubHandler = async () => {
-    const response = await signInWithGithub();
+  // const signInWithGithubHandler = async () => {
+  //   const response = await signInWithGithub();
 
-    if (!response.success) {
-      toast.error(response.message);
-      setAuthError(response.message);
-      return;
-    }
-    toast.success(response.message);
-    reset();
-    redirect("/");
-  };
+  //   if (!response.success) {
+  //     toast.error(response.message);
+  //     setAuthError(response.message);
+  //     return;
+  //   }
+  //   toast.success(response.message);
+  //   reset();
+  //   redirect("/");
+  // };
 
-  const signInWithGoogleHandler = async () => {
-    const response = await signInWithGoogle();
-    if (!response.success) {
-      toast.error(response.message);
-      setAuthError(response.message);
-      return;
-    }
-    toast.success(response.message);
-    reset();
-    redirect("/");
-  };
+  // const signInWithGoogleHandler = async () => {
+  //   const response = await signInWithGoogle();
+  //   if (!response.success) {
+  //     toast.error(response.message);
+  //     setAuthError(response.message);
+  //     return;
+  //   }
+  //   toast.success(response.message);
+  //   reset();
+  //   redirect("/");
+  // };
 
   const handleGoogleSignIn = async () => {
     const { error } = await authClient.signIn.social({
       provider: "google",
-
       callbackURL: "/dashboard",
     });
 

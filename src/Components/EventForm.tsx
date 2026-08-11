@@ -13,7 +13,6 @@ export const EventForm: React.FC<EventFormProps> = ({ venueId }) => {
   const {
     control,
     reset,
-    trigger,
     register,
     handleSubmit,
     formState: { errors, isDirty, isValid, isSubmitting },
@@ -64,22 +63,18 @@ export const EventForm: React.FC<EventFormProps> = ({ venueId }) => {
     }
   };
 
-  const getErrors = () => {
-    trigger();
-    console.log("Form Errors:", errors);
-  };
-
   const onErrorHandler = (
     errors: FieldErrors<Omit<IEventInput, "venueId">>,
   ) => {
     // if there is a issue in the form, show a toast notification
     toast.error("Please fix the errors in the form");
+    console.log("Form errors:", errors);
   };
 
   return (
     <div className="min-h-screen bg-base-200 px-4 py-8">
       <form
-        className="mx-auto w-full max-w-3xl space-y-6"
+        className="mx-auto w-full max-w-2xl md:w-2xl space-y-6"
         onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
         noValidate
       >
@@ -329,7 +324,7 @@ export const EventForm: React.FC<EventFormProps> = ({ venueId }) => {
               </div>
             </div>
             {/* Add-ons */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <div>
                 <h2 className="card-title">AddOns</h2>
                 <p className="text-sm text-base-content/60">

@@ -8,6 +8,8 @@ import { EnterPasswordForm } from "./EnterPasswordForm";
 import { VenueForm } from "./VenueForm";
 import { EventForm } from "./EventForm";
 import { VenueList } from "./VenueList";
+import { VenueGrid } from "./VenueGrid";
+import { EventsGrid } from "./EventsGrid";
 
 export {
   Navbar,
@@ -20,4 +22,6 @@ export {
   VenueForm,
   EventForm,
   VenueList,
+  VenueGrid,
+  EventsGrid,
 };

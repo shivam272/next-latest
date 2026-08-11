@@ -66,6 +66,10 @@ export interface IVenueInput {
   }[];
 }
 
+export interface IVenueRecords extends IVenueInput {
+  id: string;
+}
+
 export interface IEventInput {
   name: string;
   description: string;
@@ -82,6 +86,34 @@ export interface IEventInput {
   }[];
 }
 
+export interface IEventRecords extends IEventInput {
+  id: string;
+  venueName: string;
+  venueCity: string;
+}
+
 export interface IEventInputSchema extends IEventInput {
   venueId: Types.ObjectId;
+}
+
+export type TApiResponse<T> = {
+  data: T;
+  status: number;
+  message: string;
+};
+
+export interface IEventPaginationResponse {
+  events: IEventRecords[];
+  page: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface IVenuePaginationResponse {
+  venues: IVenueRecords[];
+  page: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }

@@ -1,8 +1,17 @@
-import Venue from "@/models/venue";
+"use server";
 
-export const fetchVenues = async () => {
+import Venue from "@/models/venue";
+import { IVenuePaginationResponse, TApiResponse } from "@/types";
+
+export const fetchVenues = async (
+  page: number,
+  limit: number,
+): Promise<TApiResponse<IVenuePaginationResponse>> => {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const response = await fetch(`${baseUrl}/api/dashboard/create-venue`);
+  const response = await fetch(
+    `${baseUrl}/api/dashboard/create-venue?page=${page}&limit=${limit}`,
+  );
+
   const { data, status, message } = await response.json();
   return { data, message, status };
 };

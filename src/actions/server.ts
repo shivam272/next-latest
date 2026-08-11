@@ -32,7 +32,7 @@ export const signUpEmail = async (
       return { success: false, message: "Sign up failed" };
     }
     return { success: true, message: "Sign up successful" };
-  } catch (err) {
+  } catch {
     return { success: false, message: "Sign up failed" };
   }
 };
@@ -57,7 +57,7 @@ export const signInEmail = async (
       return { success: false, message: "Sign in failed" };
     }
     return { success: true, message: "Sign in successful" };
-  } catch (err) {
+  } catch {
     return { success: false, message: "Sign in failed" };
   }
 };
@@ -72,7 +72,7 @@ export const signOut = async (): Promise<IAccountOutput> => {
       return { success: false, message: "Sign out failed" };
     }
     return { success: true, message: "Sign out successful" };
-  } catch (err) {
+  } catch {
     return { success: false, message: "Sign out failed" };
   }
 };
@@ -97,36 +97,36 @@ export const checkDatabaseConnection = async () => {
   }
 };
 
-export const signInWithGoogle = async (): Promise<IAccountOutput> => {
-  try {
-    const res = await auth.api.signInSocial({
-      body: {
-        provider: "google",
-        callbackURL: "/dashboard",
-      },
-    });
-    if (!res) {
-      return { success: false, message: "Sign in with Google failed" };
-    }
-    return { success: true, message: "Sign in with Google successful" };
-  } catch {
-    return { success: false, message: "Sign in with Google failed" };
-  }
-};
+// export const signInWithGoogle = async (): Promise<IAccountOutput> => {
+//   try {
+//     const res = await auth.api.signInSocial({
+//       body: {
+//         provider: "google",
+//         callbackURL: "/dashboard",
+//       },
+//     });
+//     if (!res) {
+//       return { success: false, message: "Sign in with Google failed" };
+//     }
+//     return { success: true, message: "Sign in with Google successful" };
+//   } catch {
+//     return { success: false, message: "Sign in with Google failed" };
+//   }
+// };
 
-export const signInWithGithub = async (): Promise<IAccountOutput> => {
-  try {
-    const res = await auth.api.signInSocial({
-      body: {
-        provider: "github",
-        callbackURL: "/dashboard",
-      },
-    });
-    if (!res) {
-      return { success: false, message: "Sign in with Github failed" };
-    }
-    return { success: true, message: "Sign in with Github successful" };
-  } catch {
-    return { success: false, message: "Sign in with Github failed" };
-  }
-};
+// export const signInWithGithub = async (): Promise<IAccountOutput> => {
+//   try {
+//     const res = await auth.api.signInSocial({
+//       body: {
+//         provider: "github",
+//         callbackURL: "/dashboard",
+//       },
+//     });
+//     if (!res) {
+//       return { success: false, message: "Sign in with Github failed" };
+//     }
+//     return { success: true, message: "Sign in with Github successful" };
+//   } catch {
+//     return { success: false, message: "Sign in with Github failed" };
+//   }
+// };

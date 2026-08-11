@@ -40,6 +40,7 @@ const venue = new Schema<IVenueInput>(
     },
     amenities: [
       {
+        _id: false,
         name: {
           type: String,
           required: true,

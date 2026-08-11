@@ -15,9 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex min-h-dvh flex-col">
+      <body className="flex min-h-dvh flex-col ">
         <Header className="sticky top-0 z-50" />
-        <main className="bg-gray-50 flex-1 overflow-y-auto">
+        <main className="bg-gray-50 flex-1 overflow-y-auto max-w-7xl mx-auto w-full">
           <ToastProvider>{children}</ToastProvider>
         </main>
       </body>

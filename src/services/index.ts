@@ -1,2 +1,6 @@
-export { createVenue, getAllVenues } from "./venue.service";
+export {
+  createVenue,
+  getAllVenues,
+  getVenuesByPagination,
+} from "./venue.service";
 export { createEvent } from "./event.service";

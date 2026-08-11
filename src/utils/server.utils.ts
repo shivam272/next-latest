@@ -14,3 +14,34 @@ export const comparePassword = async (
   // compare the provided password with the hashed password
   return bcrypt.compare(password, hashedPassword);
 };
+
+interface PaginationParams {
+  page: number;
+  limit: number;
+}
+
+export const validatePaginationParams = (
+  page?: string | null,
+  limit?: string | null,
+  options?: {
+    maxLimit?: number;
+    defaultPage?: number;
+    defaultLimit?: number;
+  },
+): PaginationParams => {
+  const { maxLimit = 15, defaultPage = 1, defaultLimit = 10 } = options || {};
+
+  // Validate page
+  const pageNum = Number(page ?? defaultPage);
+  const validPage =
+    Number.isInteger(pageNum) && pageNum > 0 ? pageNum : defaultPage;
+
+  // Validate limit
+  const limitNum = Number(limit ?? defaultLimit);
+  const validLimit =
+    Number.isInteger(limitNum) && limitNum > 0 && limitNum <= maxLimit
+      ? limitNum
+      : defaultLimit;
+
+  return { page: validPage, limit: validLimit };
+};

@@ -59,12 +59,13 @@ export const VenueForm = () => {
   const onErrorHandler = (errors: FieldErrors<IVenueInput>) => {
     // if there is a issue in the form, show a toast notification
     toast.error("Please fix the errors in the form");
+    console.log("Form errors:", errors);
   };
 
   return (
     <div className="min-h-screen bg-base-200 px-4 py-8">
       <form
-        className="mx-auto w-full max-w-3xl space-y-6"
+        className="mx-auto w-full max-w-2xl md:w-2xl space-y-6"
         onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
         noValidate
       >
@@ -237,7 +238,7 @@ export const VenueForm = () => {
                 </label>
               )}
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <div>
                 <h2 className="card-title">Amenities</h2>
                 <p className="text-sm text-base-content/60">

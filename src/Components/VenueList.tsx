@@ -1,34 +1,24 @@
-import { fetchVenues } from "@/actions/venue.action";
-import { VisualTable } from "@/components/Ui";
+import { VisualTable, Section } from "@/components/Ui";
+import { JSX } from "react";
+import { IVenueRecords } from "@/types";
 
-export const VenueList: React.FC = async () => {
-  const { data: venues, status, message } = await fetchVenues();
+interface IVenueListProps {
+  venues: IVenueRecords[];
+}
 
-  if (status !== 200) {
+export const VenueList: React.FC<IVenueListProps> = ({
+  venues,
+}): JSX.Element | null => {
+  if (venues.length) {
     return (
-      <div className="p-4">
-        <h2 className="text-2xl font-bold mb-4">Venue List</h2>
-        <p className="text-red-500">Error fetching venues: {message}</p>
-      </div>
+      <Section>
+        <h2 className="text-2xl font-bold mb-4">List of top Venues</h2>
+        <VisualTable
+          tableCols={["Name", "Address", "Location", "Actions"]}
+          tableData={venues}
+        />
+      </Section>
     );
   }
-
-  if (!venues || venues.length === 0) {
-    return (
-      <div className="p-4">
-        <h2 className="text-2xl font-bold mb-4">Venue List</h2>
-        <p>No venues available.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Venue List</h2>
-      <VisualTable
-        tableCols={["Name", "Address", "Location", "Actions"]}
-        tableData={venues}
-      />
-    </div>
-  );
+  return null;
 };

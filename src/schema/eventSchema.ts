@@ -72,7 +72,18 @@ export const eventSchemaClient = z.object({
         message: "Age restriction must be a positive number",
       },
     ),
-  duration: z.string().trim().min(1, "Duration is required"),
+  duration: z
+    .string()
+    .trim()
+    .refine(
+      (val) => {
+        const num = Number(val);
+        return !isNaN(num) && Number.isInteger(num) && num > 0;
+      },
+      {
+        message: "Duration must be a positive number",
+      },
+    ),
   addOns: z.array(
     z.object({
       name: z.string().trim().min(1, "Add-on name is required"),

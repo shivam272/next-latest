@@ -8,7 +8,9 @@ interface CreateEventPageProps {
   }>;
 }
 
-export const CreateEventPage: React.FC<CreateEventPageProps> = async ({
+export const dynamic = "force-dynamic";
+
+const CreateEventPage: React.FC<CreateEventPageProps> = async ({
   searchParams,
 }) => {
   const { venueId } = await searchParams;

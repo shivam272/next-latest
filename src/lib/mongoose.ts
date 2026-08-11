@@ -54,7 +54,7 @@ export const connectToDatabase = async () => {
 
   try {
     cached.conn = await cached.promise;
-  } catch (error) {
+  } catch {
     cached.promise = null;
     throw new Error(
       "Failed to connect to MongoDB. Please check your MONGODB_URI and ensure that your database is running.",

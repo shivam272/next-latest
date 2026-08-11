@@ -57,7 +57,7 @@ export const POST = async (req: Request): Promise<Response> => {
   }
 };
 
-export const GET = async (req: Request): Promise<Response> => {
+export const GET = async (): Promise<Response> => {
   // dummy response for GET request
   const dummyPromise = new Promise<Response>((resolve) => {
     setTimeout(() => {

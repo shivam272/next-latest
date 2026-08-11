@@ -27,12 +27,12 @@ interface IHeaderProps {
 
 const Header: React.FC<IHeaderProps> = ({ className = "" }) => {
   return (
-    <header
-      className={`bg-blue-600 text-white py-3 px-6 flex justify-between items-center ${className}`}
-    >
-      <h1 className="text-2xl font-bold">News Application</h1>
-      <div>
-        <MegaMenu id="event" menuGroups={menuGroups} />
+    <header className={`bg-blue-600 ${className}`}>
+      <div className="mx-auto flex max-w-7xl items-center justify-between text-white py-3 px-4">
+        <div className="text-2xl font-bold">Application</div>
+        <div>
+          <MegaMenu id="event" menuGroups={menuGroups} />
+        </div>
       </div>
     </header>
   );

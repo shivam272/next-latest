@@ -59,6 +59,7 @@ const event = new Schema<IEventInputSchema>(
     },
     addOns: [
       {
+        _id: false,
         name: {
           type: String,
           required: true,
