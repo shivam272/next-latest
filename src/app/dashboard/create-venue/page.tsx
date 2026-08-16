@@ -1,7 +1,5 @@
 import { VenueForm } from "@/components";
 
-export const dynamic = "force-dynamic";
-
 const CreateVenuePage: React.FC = () => {
   return (
     <div>

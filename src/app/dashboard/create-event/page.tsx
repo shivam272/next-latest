@@ -8,8 +8,6 @@ interface CreateEventPageProps {
   }>;
 }
 
-export const dynamic = "force-dynamic";
-
 const CreateEventPage: React.FC<CreateEventPageProps> = async ({
   searchParams,
 }) => {

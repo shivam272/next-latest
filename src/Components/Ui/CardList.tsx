@@ -195,7 +195,7 @@ const Card = (props: ICardProps) => {
 
 export const CardList = ({ list }: ICardListProps) => {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2 justify-center">
       {list.map((card) => (
         <Card key={card.id} {...card} />
       ))}
