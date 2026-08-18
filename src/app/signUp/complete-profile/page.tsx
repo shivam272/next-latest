@@ -9,14 +9,12 @@ const CompleteProfilePage: FC = async () => {
     headers: await headers(),
   });
 
-  if (!sessionData) {
+  if (!sessionData || !sessionData.user.emailVerified) {
     redirect("/signUp");
   }
 
   const { user } = sessionData;
   const { name, barId, email, id } = user;
-
-  console.log(sessionData, user.name);
 
   return (
     <div>

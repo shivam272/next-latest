@@ -7,6 +7,7 @@ import { profileSchema } from "@/schema";
 import { Loader } from "lucide-react";
 import { toast } from "react-toastify";
 import { completeProfile } from "@/actions/profile.action";
+import { useRouter } from "next/navigation";
 
 interface ICompleteProfileFormProps {
   name: string;
@@ -35,11 +36,14 @@ export const CompleteProfileForm = (props: ICompleteProfileFormProps) => {
     resolver: zodResolver(profileSchema),
   });
 
+  const router = useRouter();
+
   const onSubmitHandler = async (data: ICompleteProfileForm) => {
     const res = await completeProfile(data);
 
     if (res.success) {
       toast.success("Profile completed successfully!");
+      router.push("/dashboard");
     } else {
       toast.error(res.message || "Failed to complete profile.");
     }

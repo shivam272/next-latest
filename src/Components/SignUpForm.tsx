@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient, useSession } from "@/lib/auth-client";
@@ -8,12 +8,24 @@ import { toast } from "react-toastify";
 import { signupSchema } from "@/schema";
 import { registrationDetails } from "@/actions/server";
 import type { ISignUpForm } from "@/types";
+import { useRouter } from "next/navigation";
 
 export const SignUpForm = () => {
   const { register, handleSubmit, formState } = useForm<ISignUpForm>({
     mode: "onTouched",
     resolver: zodResolver(signupSchema),
   });
+
+  const { data } = useSession();
+  const { user } = data || {};
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && user.emailVerified) {
+      router.push("/signUp/complete-profile");
+    }
+  }, [user?.emailVerified]);
 
   const { errors, isSubmitting, isValid } = formState;
 

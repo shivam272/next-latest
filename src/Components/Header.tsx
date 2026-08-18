@@ -16,6 +16,7 @@ const menuGroups = [
       { label: "Home", href: "/" },
       { label: "Archive", href: "/news/archive" },
       { label: "Sign In", href: "/signIn" },
+      { label: "Sign Up", href: "/signUp" },
       { label: "Register", href: "/register" },
     ],
   },
