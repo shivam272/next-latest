@@ -49,6 +49,13 @@ export interface IAccountInput {
   name: string;
 }
 
+export interface IRegistrationInput {
+  email: string;
+  name: string;
+  barId: string;
+  password: string;
+}
+
 export enum ETokenType {
   INVALID_TOKEN = "INVALID_TOKEN",
 }
@@ -97,7 +104,8 @@ export interface IEventInputSchema extends IEventInput {
 }
 
 export type TApiResponse<T> = {
-  data: T;
+  data?: T;
+  success?: boolean;
   status: number;
   message: string;
 };
@@ -116,4 +124,22 @@ export interface IVenuePaginationResponse {
   limit: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
+}
+
+export interface ISignUpForm {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  barId: string;
+}
+
+export interface ICompleteProfileForm extends Pick<
+  ISignUpForm,
+  "name" | "email" | "barId"
+> {
+  userId: string;
+  telephone: string;
+  gender: EGenderEnum;
+  age: string;
 }

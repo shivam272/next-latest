@@ -3,7 +3,7 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { type IAccountInput } from "@/types/index";
+import type { IAccountInput, IRegistrationInput } from "@/types/index";
 import { connectToDatabase } from "@/lib/mongoose";
 
 interface IAccountOutput {
@@ -34,6 +34,30 @@ export const signUpEmail = async (
     return { success: true, message: "Sign up successful" };
   } catch {
     return { success: false, message: "Sign up failed" };
+  }
+};
+
+export const registrationDetails = async (
+  config: IRegistrationInput,
+): Promise<IAccountOutput> => {
+  const { email, name, barId, password } = config;
+  try {
+    const authResponse = await auth.api.signUpEmail({
+      body: {
+        email,
+        password, // no need to hash the password, better-auth will handle it
+        name,
+        barId,
+      },
+      headers: await headers(),
+    });
+
+    if (!authResponse) {
+      return { success: false, message: "registration failed" };
+    }
+    return { success: true, message: "registration successful" };
+  } catch {
+    return { success: false, message: "registration failed" };
   }
 };
 

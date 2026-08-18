@@ -7,9 +7,11 @@ import { ForgotPasswordForm } from "./ForgotPassword";
 import { EnterPasswordForm } from "./EnterPasswordForm";
 import { VenueForm } from "./VenueForm";
 import { EventForm } from "./EventForm";
+import { SignUpForm } from "./SignUpForm";
 import { VenueList } from "./VenueList";
 import { VenueGrid } from "./VenueGrid";
 import { EventsGrid } from "./EventsGrid";
+import { CompleteProfileForm } from "./CompleteProfile";
 
 export {
   Navbar,
@@ -24,4 +26,6 @@ export {
   VenueList,
   VenueGrid,
   EventsGrid,
+  SignUpForm,
+  CompleteProfileForm,
 };
