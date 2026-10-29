@@ -5,7 +5,10 @@ export const dynamic = "force-dynamic"; // opt out of static rendering for this 
 
 const VenuesPage = async () => {
   const { data: venuesData } = await fetchVenues(1, 4);
-  return <VenueGrid venuesData={venuesData} showLoadMore />;
+  if (venuesData) {
+    return <VenueGrid venuesData={venuesData} showLoadMore />;
+  }
+  return <div>No Data found</div>;
 };
 
 export default VenuesPage;

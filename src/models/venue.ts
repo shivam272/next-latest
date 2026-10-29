@@ -1,7 +1,7 @@
 import { Schema, models, model } from "mongoose";
-import { type IVenueInput } from "@/types/index";
+import { type IVenueServerInput } from "@/types/index";
 
-const venue = new Schema<IVenueInput>(
+const venue = new Schema<IVenueServerInput>(
   {
     name: {
       type: String,
@@ -38,6 +38,29 @@ const venue = new Schema<IVenueInput>(
       required: true,
       trim: true,
     },
+    adhaarCard: [
+      {
+        data: {
+          type: Buffer,
+          required: false,
+        },
+        filename: {
+          type: String,
+          required: false,
+          trim: true,
+        },
+        mimeType: {
+          type: String,
+          required: false,
+          trim: true,
+        },
+        uploadedAt: {
+          type: Date,
+          required: false,
+          default: null,
+        },
+      },
+    ],
     amenities: [
       {
         _id: false,
@@ -54,4 +77,4 @@ const venue = new Schema<IVenueInput>(
   },
 );
 
-export default models.Venue || model<IVenueInput>("Venue", venue);
+export default models.Venue || model<IVenueServerInput>("Venue", venue);

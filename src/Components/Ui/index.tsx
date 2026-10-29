@@ -3,3 +3,4 @@ export { MegaMenu } from "./MegaMenu";
 export { VisualTable } from "./VisualTable";
 export { Section } from "./Section";
 export { CardList } from "./CardList";
+export { DummyButton } from "./Button";

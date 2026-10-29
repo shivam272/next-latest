@@ -177,7 +177,7 @@ export const SignUpForm = () => {
           </button>
         </form>
 
-        <div className="relative my-6">
+        <div className="relative mt-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-white/10" />
           </div>
@@ -191,7 +191,6 @@ export const SignUpForm = () => {
 
         <div className="mt-6 text-center text-sm text-gray-400">
           {`Already have an account? `}
-
           <Link
             href="/signIn"
             className="font-medium text-blue-400 hover:text-blue-300"

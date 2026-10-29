@@ -1,0 +1,137 @@
+// @use "../../styles/variables" as vars;
+// @use "../../styles/mixins" as mixins;
+
+$hover-scale: 1.05;
+$primary: #75797b;
+$radius: 2px;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button {
+  @include flex-center;
+  background: $primary;
+  border-radius: $radius;
+}
+
+.buttonExtend {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.primaryButton {
+  @extend .buttonExtend;
+  background: blue;
+  color: white;
+}
+
+@mixin flexFunc($direction: row, $gap: 0) {
+  display: flex;
+  flex-direction: $direction;
+  gap: $gap;
+}
+
+@mixin mobile {
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: 1024px) {
+    display: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@function double($size) {
+  @return $size * 2;
+}
+
+.card {
+  padding: double(8px);
+}
+
+.button {
+  @include flexFunc();
+  @include flex-center;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: scale($hover-scale);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &::after {
+    content: " →";
+    margin-left: 6px;
+  }
+}
+
+.card {
+  padding: 20px;
+
+  .title {
+    font-size: 20px;
+
+    &:hover {
+      color: blue;
+    }
+  }
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+@mixin button($type) {
+  padding: 10px 20px;
+
+  @if $type == "primary" {
+    background: blue;
+    color: white;
+  } @else if $type == "danger" {
+    background: red;
+    color: white;
+  } @else {
+    background: gray;
+  }
+}
+
+// @for $i from 1 through 5 {
+//   .margin-#{$i} {
+//     margin: $i * 4px;
+//   }
+// }
+
+// .margin-1 {
+//   margin: 4px;
+// }
+
+// .margin-2 {
+//   margin: 8px;
+// }
+
+// .margin-3 {
+//   margin: 12px;
+// }
+
+// .margin-4 {
+//   margin: 16px;
+// }
+
+// .margin-5 {
+//   margin: 20px;
+// }

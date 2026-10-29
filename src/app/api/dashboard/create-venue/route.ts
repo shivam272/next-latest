@@ -1,5 +1,5 @@
 import { createVenue, getVenuesByPagination } from "@/services";
-import { venueSchema } from "@/schema/venueSchema";
+import { venueServerSchema } from "@/schema";
 import { IVenuePaginationResponse } from "@/types";
 import { NextResponse, NextRequest } from "next/server";
 import { validatePaginationParams } from "@/utils/server.utils";
@@ -34,11 +34,32 @@ const errorResponse: Record<string, IBaseResponse> = {
 };
 
 export const POST = async (
-  req: Request,
+  req: NextRequest,
 ): Promise<NextResponse<IBaseResponse>> => {
-  const body = await req.json();
+  const formData = await req.formData();
 
-  const validationResult = venueSchema.safeParse(body);
+  let venueDataParsed;
+
+  try {
+    const venueData = formData.get("venueData");
+    if (typeof venueData !== "string") {
+      return NextResponse.json({
+        ...errorResponse.typeErrorValidation,
+        message: "venueData must be a string",
+      });
+    }
+    venueDataParsed = JSON.parse(venueData as string);
+  } catch {
+    return NextResponse.json({
+      ...errorResponse.typeErrorValidation,
+      message: "Invalid JSON in venueData",
+    });
+  }
+
+  const validationResult = venueServerSchema.safeParse({
+    ...venueDataParsed,
+    adhaarCard: formData.getAll("adhaarCard"),
+  });
 
   if (!validationResult.success) {
     return NextResponse.json({ ...errorResponse.typeErrorValidation });
@@ -46,8 +67,22 @@ export const POST = async (
 
   const secureData = validationResult.data;
 
+  const { adhaarCard = [] } = secureData;
+
+  const uploadedFiles = await Promise.all(
+    adhaarCard.map(async (file) => {
+      const arrayBuffer = await file.arrayBuffer();
+      return {
+        data: Buffer.from(arrayBuffer),
+        filename: file.name,
+        mimeType: file.type,
+        uploadedAt: new Date(),
+      };
+    }),
+  );
+
   try {
-    await createVenue(secureData);
+    await createVenue({ ...secureData, adhaarCard: uploadedFiles });
     return NextResponse.json({ ...errorResponse.registeredSuccessfully });
   } catch {
     return NextResponse.json({ ...errorResponse.errorRegisteringVenue });

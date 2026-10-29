@@ -22,6 +22,7 @@ export type TNewsArticle = {
   author: string; // Author of the news article
   category: string; // Category of the news article
 };
+
 export enum EGenderEnum {
   female = "female",
   male = "male",
@@ -68,9 +69,21 @@ export interface IVenueInput {
   zipCode: string;
   country: string;
   capacity: string;
+  adhaarCard?: FileList; // Use FileList for react-hook-form
   amenities: {
     name: string;
   }[];
+}
+
+export interface IAdhaarCard {
+  data: Buffer<ArrayBuffer>;
+  filename: string;
+  mimeType: string;
+  uploadedAt: Date;
+}
+
+export interface IVenueServerInput extends Omit<IVenueInput, "adhaarCard"> {
+  adhaarCard: IAdhaarCard[];
 }
 
 export interface IVenueRecords extends IVenueInput {

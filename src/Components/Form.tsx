@@ -49,8 +49,6 @@ export const FormComp = () => {
 
     const content = await res.json();
 
-    console.log(content);
-
     if (content.status <= 201) {
       toast.success(content.message);
     } else {

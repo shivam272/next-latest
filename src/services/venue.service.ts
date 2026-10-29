@@ -1,8 +1,13 @@
-import { IVenueInput, IVenueRecords, IVenuePaginationResponse } from "@/types";
+import {
+  IVenueInput,
+  IVenueRecords,
+  IVenuePaginationResponse,
+  IVenueServerInput,
+} from "@/types";
 import { connectToDatabase } from "@/lib/mongoose";
 import Venue from "@/models/venue";
 
-export const createVenue = async (data: IVenueInput) => {
+export const createVenue = async (data: IVenueServerInput) => {
   await connectToDatabase();
   return Venue.create(data);
 };

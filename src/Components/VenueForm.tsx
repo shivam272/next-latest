@@ -1,8 +1,9 @@
 "use client";
 import { useForm, useFieldArray, type FieldErrors } from "react-hook-form";
 import { type IVenueInput } from "@/types";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { venueSchema } from "@/schema";
+import { venueClientSchema } from "@/schema";
 import { toast } from "react-toastify";
 import { redirect } from "next/navigation";
 
@@ -12,6 +13,7 @@ export const VenueForm = () => {
     reset,
     register,
     handleSubmit,
+    watch,
     formState: { errors, isDirty, isValid, isSubmitting },
   } = useForm<IVenueInput>({
     defaultValues: {
@@ -22,33 +24,62 @@ export const VenueForm = () => {
       zipCode: "",
       country: "",
       capacity: "",
+      adhaarCard: undefined,
       amenities: [
         {
           name: "",
         },
       ],
     },
-    resolver: zodResolver(venueSchema),
+    resolver: zodResolver(venueClientSchema),
     mode: "onTouched",
   });
+
+  const [adhaarPreviews, setAdhaarPreviews] = useState<string[]>([]);
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "amenities",
   });
 
+  const adhaarCardFiles = watch("adhaarCard");
+
+  useEffect(() => {
+    if (!adhaarCardFiles?.length) {
+      setAdhaarPreviews([]);
+      return;
+    }
+
+    const previewUrls = Array.from(adhaarCardFiles).map((file) =>
+      URL.createObjectURL(file),
+    );
+    setAdhaarPreviews(previewUrls);
+
+    return () => {
+      previewUrls.forEach((previewUrl) => URL.revokeObjectURL(previewUrl));
+    };
+  }, [adhaarCardFiles]);
+
   const onSubmitHandler = async (data: IVenueInput) => {
+    const formData = new FormData();
+    const { adhaarCard, ...venueData } = data;
+
+    formData.append("venueData", JSON.stringify(venueData));
+    if (adhaarCard?.length) {
+      Array.from(adhaarCard).forEach((file) => {
+        formData.append("adhaarCard", file);
+      });
+    }
     const res = await fetch("/api/dashboard/create-venue", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: formData,
     });
 
     const content = await res.json();
 
     if (content.status <= 201) {
       toast.success(content.message);
+      setAdhaarPreviews([]);
       reset();
       redirect("/dashboard");
     } else {
@@ -216,6 +247,69 @@ export const VenueForm = () => {
                 )}
               </div>
             </div>
+
+            {/* Document Uploads Section */}
+            <div className="mt-6 border-t pt-6">
+              <h3 className="text-lg font-semibold mb-4">
+                Document Verification
+              </h3>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {/* Aadhar Card */}
+                <div>
+                  <label htmlFor="adhaarCard" className="label">
+                    <span className="label-text font-medium">Aadhar Card</span>
+                    <span className="text-xs text-base-content/60">
+                      (Optional)
+                    </span>
+                  </label>
+                  <input
+                    multiple
+                    type="file"
+                    id="adhaarCard"
+                    accept="application/pdf"
+                    {...register("adhaarCard")}
+                    className={`file-input file-input-bordered w-full focus:outline-none ${
+                      errors.adhaarCard ? "file-input-error" : ""
+                    }`}
+                  />
+                  {adhaarPreviews.length && adhaarCardFiles?.length ? (
+                    <div className="mt-3 rounded-lg overflow-hidden border border-base-300">
+                      {adhaarPreviews.map((previewUrl, index) => {
+                        return (
+                          <div
+                            key={previewUrl}
+                            className="p-4 flex items-center gap-3 bg-base-200"
+                          >
+                            <span className="text-2xl">📄</span>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium">
+                                {adhaarCardFiles?.[index]?.name}
+                              </p>
+                              <a
+                                href={previewUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-blue-500 hover:underline"
+                              >
+                                Preview PDF in new tab
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+
+                  {errors.adhaarCard && (
+                    <label className="label">
+                      <span className="label-text-alt text-error">
+                        {errors.adhaarCard.message}
+                      </span>
+                    </label>
+                  )}
+                </div>
+              </div>
+            </div>
             {/* Capacity */}
             <div className=" mt-2">
               <label htmlFor="capacity" className="label">
@@ -286,7 +380,10 @@ export const VenueForm = () => {
               <button
                 disabled={!isDirty}
                 type="button"
-                onClick={() => reset()}
+                onClick={() => {
+                  reset();
+                  setAdhaarPreviews([]);
+                }}
                 className="btn btn-outline"
               >
                 Reset
@@ -296,7 +393,7 @@ export const VenueForm = () => {
                 type="submit"
                 className="btn btn-primary"
               >
-                Create Venue
+                {isSubmitting ? "Creating..." : "Create Venue"}
               </button>
             </div>
           </div>
