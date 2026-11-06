@@ -7,6 +7,7 @@ const menuGroups = [
     items: [
       { label: "Dashboard", href: "/dashboard" },
       { label: "Create Venue", href: "/dashboard/create-venue" },
+      { label: "Upload demo", href: "/dashboard/uploads" },
     ],
   },
   {
