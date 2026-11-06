@@ -1,5 +1,22 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Upload demo
+
+Open `/dashboard/uploads` or choose **Services → Upload demo**. The form accepts
+an image, a single file, and multiple files, with local previews and a saved list
+that remains available after reloading.
+
+Set `MONGODB_URI` and `BLOB_READ_WRITE_TOKEN` in `.env.local`. Connect a **public**
+Vercel Blob store to the project and configure the same variables for deployment.
+Files upload directly from the browser to Blob; MongoDB stores the title and file
+URLs/metadata. The form saves the record after uploading, so database saving does
+not depend on a Blob completion callback reaching localhost.
+
+The Blob upload token sets `cacheControlMaxAge: 31536000`, which configures the
+file's HTTP cache header for one year. Each upload gets a unique URL. Previews use
+those URLs directly, so the browser handles caching. PDFs and other files open
+through a link; images use native browser previews.
+
 ## Getting Started
 
 First, run the development server:
