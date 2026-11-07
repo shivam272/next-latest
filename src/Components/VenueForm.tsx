@@ -94,7 +94,7 @@ export const VenueForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 px-4 py-8">
+    <div className="min-h-screen bg-white px-4 py-8">
       <form
         className="mx-auto w-full max-w-2xl md:w-2xl space-y-6"
         onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
@@ -108,7 +108,7 @@ export const VenueForm = () => {
           </p>
         </div>
         {/* Venue Information */}
-        <div className="card bg-base-100 shadow-md">
+        <div className="card bg-white shadow-md" data-theme="light">
           <div className="card-body">
             {/* Venue Name */}
             <div>
