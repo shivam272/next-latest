@@ -1,4 +1,4 @@
-import { createVenue, getVenuesByPagination } from "@/services";
+import { createVenue, getVenuesByPagination, uploadToBlob } from "@/services";
 import { venueServerSchema } from "@/schema";
 import { IVenuePaginationResponse } from "@/types";
 import { NextResponse, NextRequest } from "next/server";
@@ -71,9 +71,10 @@ export const POST = async (
 
   const uploadedFiles = await Promise.all(
     adhaarCard.map(async (file) => {
-      const arrayBuffer = await file.arrayBuffer();
+      const blob = await uploadToBlob(file, "venues/adhaar");
       return {
-        data: Buffer.from(arrayBuffer),
+        url: blob.path,
+        size: blob.size,
         filename: file.name,
         mimeType: file.type,
         uploadedAt: new Date(),

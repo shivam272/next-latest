@@ -40,8 +40,13 @@ const venue = new Schema<IVenueServerInput>(
     },
     adhaarCard: [
       {
-        data: {
-          type: Buffer,
+        url: {
+          type: String,
+          required: false,
+          trim: true,
+        },
+        size: {
+          type: Number,
           required: false,
         },
         filename: {

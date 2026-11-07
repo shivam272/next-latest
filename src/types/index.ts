@@ -76,7 +76,8 @@ export interface IVenueInput {
 }
 
 export interface IAdhaarCard {
-  data: Buffer<ArrayBuffer>;
+  url: string;
+  size: number;
   filename: string;
   mimeType: string;
   uploadedAt: Date;
