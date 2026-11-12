@@ -1,7 +1,10 @@
 import { type FC } from "react";
 import { EnterPasswordForm } from "@/components";
-import { ETokenType } from "@/types";
 import { redirect } from "next/navigation";
+
+enum ETokenType {
+  INVALID_TOKEN = "INVALID_TOKEN",
+}
 
 interface EnterPasswordPageProps {
   searchParams: Promise<{

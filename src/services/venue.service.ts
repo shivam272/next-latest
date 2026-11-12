@@ -26,6 +26,9 @@ export const getAllVenues = async (): Promise<IVenueRecords[]> => {
     state: venue.state,
     zipCode: venue.zipCode,
     capacity: venue.capacity,
+    image: venue.image,
+    adhaarCard: venue.adhaarCard,
+    qualification: venue.qualification,
     id: venue._id.toString(),
   }));
 };
@@ -55,6 +58,9 @@ export const getVenuesByPagination = async (
     state: venue.state,
     zipCode: venue.zipCode,
     capacity: venue.capacity,
+    image: venue.image,
+    adhaarCard: venue.adhaarCard,
+    qualification: venue.qualification,
     id: venue._id.toString(),
   }));
 

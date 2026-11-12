@@ -44,22 +44,6 @@ export interface IFormInput {
   }[];
 }
 
-export interface IAccountInput {
-  email: string;
-  password: string;
-  name: string;
-}
-
-export interface IRegistrationInput {
-  email: string;
-  name: string;
-  barId: string;
-  password: string;
-}
-
-export enum ETokenType {
-  INVALID_TOKEN = "INVALID_TOKEN",
-}
 
 export interface IVenueInput {
   name: string;
@@ -69,25 +53,41 @@ export interface IVenueInput {
   zipCode: string;
   country: string;
   capacity: string;
-  adhaarCard?: FileList; // Use FileList for react-hook-form
+  image?: FileList;
+  adhaarCard?: FileList;
+  qualification?: FileList;
   amenities: {
     name: string;
   }[];
 }
 
 export interface IAdhaarCard {
-  data: Buffer<ArrayBuffer>;
+  path?: string;
+  publicUrl?: string;
+  url?: string;
+  size: number;
   filename: string;
   mimeType: string;
   uploadedAt: Date;
 }
 
-export interface IVenueServerInput extends Omit<IVenueInput, "adhaarCard"> {
-  adhaarCard: IAdhaarCard[];
+export interface IVenueServerInput extends Omit<
+  IVenueInput,
+  "adhaarCard" | "image" | "qualification"
+> {
+  image?: IAdhaarCard;
+  adhaarCard?: IAdhaarCard[];
+  qualification?: IAdhaarCard[];
 }
 
-export interface IVenueRecords extends IVenueInput {
+export interface IVenueRecords extends Omit<
+  IVenueInput,
+  "image" | "adhaarCard" | "qualification"
+> {
   id: string;
+  image?: IAdhaarCard;
+  adhaarCard?: IAdhaarCard[];
+  qualification?: IAdhaarCard[];
 }
 
 export interface IEventInput {
