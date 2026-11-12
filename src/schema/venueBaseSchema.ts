@@ -66,7 +66,27 @@ const venueSchema = z.object({
   ),
 });
 
+const MAX_SIZE = 1_000_000;
+const IMAGE_TYPES = ["image/jpeg", "image/jpg", "application/pdf"];
+const PDF_TYPES = ["application/pdf"];
+
+const fileCheck = (types: string[], maxCount = 1) =>
+  z.custom<FileList>()
+    .optional()
+    .refine((f) => !f || f.length <= maxCount, `Max ${maxCount} file(s)`)
+    .refine(
+      (f) => !f || Array.from(f).every((file) => file.size <= MAX_SIZE && types.includes(file.type)),
+      "Invalid format or size exceeds 1MB"
+    );
+
 export const venueServerSchema = venueSchema.extend({
+  image: z
+    .instanceof(File)
+    .optional()
+    .refine(
+      (file) => !file || (file.size <= MAX_SIZE && IMAGE_TYPES.includes(file.type)),
+      "Invalid image format or size exceeds 1MB"
+    ),
   adhaarCard: z
     .array(z.instanceof(File))
     .optional()
@@ -75,16 +95,34 @@ export const venueServerSchema = venueSchema.extend({
         if (!files || files.length === 0) return true;
         return files.every(
           (file) =>
-            file.size <= MAX_FILE_SIZE &&
-            ACCEPTED_IMAGE_TYPES.includes(file.type),
+            file.size <= MAX_SIZE &&
+            PDF_TYPES.includes(file.type),
         );
       },
       {
         message: "Each file must not exceed 1 MB and be a valid PDF.",
       },
     ),
+  qualification: z
+    .array(z.instanceof(File))
+    .optional()
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return true;
+        return files.every(
+          (file) =>
+            file.size <= MAX_SIZE &&
+            PDF_TYPES.includes(file.type),
+        );
+      },
+      {
+        message: "Each qualification must not exceed 1 MB and be a valid PDF.",
+      },
+    ),
 });
 
 export const venueClientSchema = venueSchema.extend({
-  adhaarCard: adhaarCardSchema,
+  image: fileCheck(IMAGE_TYPES, 1),
+  adhaarCard: fileCheck(PDF_TYPES, 1),
+  qualification: fileCheck(PDF_TYPES, 10),
 });

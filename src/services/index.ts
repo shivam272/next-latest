@@ -7,9 +7,8 @@ export { createEvent } from "./event.service";
 export { submitProfile } from "./profile.service";
 export {
   uploadToBlob,
-  uploadMultipleToBlob,
-  deleteFromBlob,
-  deleteMultipleFromBlob,
-  getPrivateBlob,
-  type IStoredFile,
+  // uploadMultipleToBlob,
+  // deleteFromBlob,
+  // deleteMultipleFromBlob,
+  // getPrivateBlob,
 } from "./blob.service";

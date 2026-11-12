@@ -56,9 +56,15 @@ export const POST = async (
     });
   }
 
+  const rawImage = formData.get("image");
+  const rawAdhaar = formData.getAll("adhaarCard");
+  const rawQual = formData.getAll("qualification");
+
   const validationResult = venueServerSchema.safeParse({
     ...venueDataParsed,
-    adhaarCard: formData.getAll("adhaarCard"),
+    image: rawImage instanceof File ? rawImage : undefined,
+    adhaarCard: rawAdhaar.filter((f): f is File => f instanceof File),
+    qualification: rawQual.filter((f): f is File => f instanceof File),
   });
 
   if (!validationResult.success) {
@@ -67,13 +73,41 @@ export const POST = async (
 
   const secureData = validationResult.data;
 
-  const { adhaarCard = [] } = secureData;
+  const { image, adhaarCard = [], qualification = [] } = secureData;
 
-  const uploadedFiles = await Promise.all(
+  let uploadedImage;
+  if (image) {
+    const blob = await uploadToBlob(image, "venues/images");
+    uploadedImage = {
+      path: blob.path,
+      publicUrl: blob.publicUrl,
+      size: blob.size,
+      filename: image.name,
+      mimeType: image.type,
+      uploadedAt: new Date(),
+    };
+  }
+
+  const uploadedAdhaar = await Promise.all(
     adhaarCard.map(async (file) => {
       const blob = await uploadToBlob(file, "venues/adhaar");
       return {
-        url: blob.path,
+        path: blob.path,
+        publicUrl: blob.publicUrl,
+        size: blob.size,
+        filename: file.name,
+        mimeType: file.type,
+        uploadedAt: new Date(),
+      };
+    }),
+  );
+
+  const uploadedQualification = await Promise.all(
+    qualification.map(async (file) => {
+      const blob = await uploadToBlob(file, "venues/qualifications");
+      return {
+        path: blob.path,
+        publicUrl: blob.publicUrl,
         size: blob.size,
         filename: file.name,
         mimeType: file.type,
@@ -83,7 +117,12 @@ export const POST = async (
   );
 
   try {
-    await createVenue({ ...secureData, adhaarCard: uploadedFiles });
+    await createVenue({
+      ...secureData,
+      image: uploadedImage,
+      adhaarCard: uploadedAdhaar,
+      qualification: uploadedQualification,
+    });
     return NextResponse.json({ ...errorResponse.registeredSuccessfully });
   } catch {
     return NextResponse.json({ ...errorResponse.errorRegisteringVenue });

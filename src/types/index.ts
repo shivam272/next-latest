@@ -69,26 +69,35 @@ export interface IVenueInput {
   zipCode: string;
   country: string;
   capacity: string;
-  adhaarCard?: FileList; // Use FileList for react-hook-form
+  image?: FileList;          // 👈 Added
+  adhaarCard?: FileList;
+  qualification?: FileList;  // 👈 Added
   amenities: {
     name: string;
   }[];
 }
 
 export interface IAdhaarCard {
-  url: string;
+  path?: string;
+  publicUrl?: string;
+  url?: string;
   size: number;
   filename: string;
   mimeType: string;
   uploadedAt: Date;
 }
 
-export interface IVenueServerInput extends Omit<IVenueInput, "adhaarCard"> {
-  adhaarCard: IAdhaarCard[];
+export interface IVenueServerInput extends Omit<IVenueInput, "adhaarCard" | "image" | "qualification"> {
+  image?: IAdhaarCard;
+  adhaarCard?: IAdhaarCard[];
+  qualification?: IAdhaarCard[];
 }
 
-export interface IVenueRecords extends IVenueInput {
+export interface IVenueRecords extends Omit<IVenueInput, "image" | "adhaarCard" | "qualification"> {
   id: string;
+  image?: IAdhaarCard;
+  adhaarCard?: IAdhaarCard[];
+  qualification?: IAdhaarCard[];
 }
 
 export interface IEventInput {
