@@ -3,8 +3,20 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import type { IAccountInput, IRegistrationInput } from "@/types/index";
 import { connectToDatabase } from "@/lib/mongoose";
+
+interface IAccountInput {
+  email: string;
+  password: string;
+  name: string;
+}
+
+interface IRegistrationInput {
+  email: string;
+  name: string;
+  barId: string;
+  password: string;
+}
 
 interface IAccountOutput {
   success: boolean;

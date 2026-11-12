@@ -44,22 +44,6 @@ export interface IFormInput {
   }[];
 }
 
-export interface IAccountInput {
-  email: string;
-  password: string;
-  name: string;
-}
-
-export interface IRegistrationInput {
-  email: string;
-  name: string;
-  barId: string;
-  password: string;
-}
-
-export enum ETokenType {
-  INVALID_TOKEN = "INVALID_TOKEN",
-}
 
 export interface IVenueInput {
   name: string;
@@ -69,9 +53,9 @@ export interface IVenueInput {
   zipCode: string;
   country: string;
   capacity: string;
-  image?: FileList;          // 👈 Added
+  image?: FileList;
   adhaarCard?: FileList;
-  qualification?: FileList;  // 👈 Added
+  qualification?: FileList;
   amenities: {
     name: string;
   }[];
@@ -87,13 +71,19 @@ export interface IAdhaarCard {
   uploadedAt: Date;
 }
 
-export interface IVenueServerInput extends Omit<IVenueInput, "adhaarCard" | "image" | "qualification"> {
+export interface IVenueServerInput extends Omit<
+  IVenueInput,
+  "adhaarCard" | "image" | "qualification"
+> {
   image?: IAdhaarCard;
   adhaarCard?: IAdhaarCard[];
   qualification?: IAdhaarCard[];
 }
 
-export interface IVenueRecords extends Omit<IVenueInput, "image" | "adhaarCard" | "qualification"> {
+export interface IVenueRecords extends Omit<
+  IVenueInput,
+  "image" | "adhaarCard" | "qualification"
+> {
   id: string;
   image?: IAdhaarCard;
   adhaarCard?: IAdhaarCard[];

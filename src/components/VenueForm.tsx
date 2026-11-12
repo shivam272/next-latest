@@ -213,7 +213,6 @@ export const VenueForm = () => {
             </div>
           </div>
 
-          {/* Document Verification Section */}
           <div className="border-t pt-4">
             <h3 className="text-lg font-semibold mb-3">Document Verification</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

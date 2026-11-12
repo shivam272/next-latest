@@ -148,3 +148,132 @@ export const GET = async (
     return NextResponse.json({ ...errorResponse.errorFetchingVenues });
   }
 };
+
+export const DELETE = async (req: NextRequest) => {
+  try {
+    const { id, field, filePath } = await req.json();
+    if (!id || !field || !filePath) {
+      return NextResponse.json(
+        { message: "id, field, and filePath are required" },
+        { status: 400 },
+      );
+    }
+
+    const { deleteFromBlob } = await import("@/services/blob.service");
+    await deleteFromBlob(filePath);
+
+    const { connectToDatabase } = await import("@/lib/mongoose");
+    const Venue = (await import("@/models/venue")).default;
+    await connectToDatabase();
+
+    let updatedVenue;
+    if (field === "image") {
+      updatedVenue = await Venue.findByIdAndUpdate(
+        id,
+        { $unset: { image: 1 } },
+        { new: true },
+      ).lean();
+    } else {
+      updatedVenue = await Venue.findByIdAndUpdate(
+        id,
+        { $pull: { [field]: { path: filePath } } },
+        { new: true },
+      ).lean();
+    }
+
+    return NextResponse.json({
+      message: "Deleted successfully",
+      venue: updatedVenue,
+      status: 200,
+    });
+  } catch (error: any) {
+    console.error("Error in DELETE venue file:", error);
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+};
+
+export const PATCH = async (req: NextRequest) => {
+  try {
+    const formData = await req.formData();
+    const id = formData.get("id") as string;
+    const field = formData.get("field") as string;
+    const oldPath = formData.get("oldPath") as string | null;
+    const fileIndexStr = formData.get("fileIndex") as string | null;
+    const newFile = formData.get("file") as File | null;
+
+    if (!id || !field || !newFile) {
+      return NextResponse.json(
+        { message: "id, field, and file are required" },
+        { status: 400 },
+      );
+    }
+
+    const { uploadToBlob, deleteFromBlob } =
+      await import("@/services/blob.service");
+    const { connectToDatabase } = await import("@/lib/mongoose");
+    const Venue = (await import("@/models/venue")).default;
+
+    if (oldPath) {
+      await deleteFromBlob(oldPath);
+    }
+
+    const folder =
+      field === "image"
+        ? "venues/images"
+        : field === "adhaarCard"
+          ? "venues/adhaar"
+          : "venues/qualifications";
+
+    const newBlob = await uploadToBlob(newFile, folder);
+
+    const storedFileData = {
+      path: newBlob.path,
+      publicUrl: newBlob.publicUrl,
+      size: newBlob.size,
+      filename: newFile.name,
+      mimeType: newFile.type,
+      uploadedAt: new Date(),
+    };
+
+    await connectToDatabase();
+    let updatedVenue;
+
+    if (field === "image") {
+      updatedVenue = await Venue.findByIdAndUpdate(
+        id,
+        { $set: { image: storedFileData } },
+        { new: true },
+      ).lean();
+    } else if (oldPath) {
+      // Replace matching item in array by old path
+      updatedVenue = await Venue.findOneAndUpdate(
+        { _id: id, [`${field}.path`]: oldPath },
+        { $set: { [`${field}.$`]: storedFileData } },
+        { new: true },
+      ).lean();
+    } else if (fileIndexStr !== null && !isNaN(Number(fileIndexStr))) {
+      const idx = Number(fileIndexStr);
+      updatedVenue = await Venue.findByIdAndUpdate(
+        id,
+        { $set: { [`${field}.${idx}`]: storedFileData } },
+        { new: true },
+      ).lean();
+    } else {
+      // Append if no index or oldPath
+      updatedVenue = await Venue.findByIdAndUpdate(
+        id,
+        { $push: { [field]: storedFileData } },
+        { new: true },
+      ).lean();
+    }
+
+    return NextResponse.json({
+      message: "Updated successfully",
+      venue: updatedVenue,
+      status: 200,
+    });
+  } catch (error: any) {
+    console.error("Error in PATCH venue file:", error);
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+};
