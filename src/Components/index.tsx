@@ -12,6 +12,8 @@ import { VenueList } from "./VenueList";
 import { VenueGrid } from "./VenueGrid";
 import { EventsGrid } from "./EventsGrid";
 import { CompleteProfileForm } from "./CompleteProfile";
+import { DocumentProfileForm } from "./DocumentProfileForm";
+import { DocumentProfileList } from "./DocumentProfileList";
 
 export {
   Navbar,
@@ -28,4 +30,6 @@ export {
   EventsGrid,
   SignUpForm,
   CompleteProfileForm,
+  DocumentProfileForm,
+  DocumentProfileList,
 };

@@ -1,3 +1,4 @@
+import { DOCUMENT_PATHS } from "@/constants";
 import { MegaMenu } from "./Ui";
 
 const menuGroups = [
@@ -7,6 +8,8 @@ const menuGroups = [
     items: [
       { label: "Dashboard", href: "/dashboard" },
       { label: "Create Venue", href: "/dashboard/create-venue" },
+      { label: "Documents", href: DOCUMENT_PATHS.list },
+      { label: "Add Documents", href: DOCUMENT_PATHS.create },
     ],
   },
   {

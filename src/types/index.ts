@@ -147,6 +147,55 @@ export interface ISignUpForm {
   barId: string;
 }
 
+/** The three upload fields of a document profile. */
+export enum EDocumentField {
+  IMAGE = "image",
+  ADHAAR = "adhaar",
+  QUALIFICATION = "qualification",
+}
+
+/** A file stored in Vercel Blob: its public URL and size in bytes. */
+export interface IStoredFile {
+  path: string;
+  size: number;
+}
+
+export interface IDocumentProfileInput {
+  name: string;
+  image: IStoredFile;
+  adhaar: IStoredFile;
+  qualification: IStoredFile[];
+}
+
+/** A document profile as it reaches the client: `id`, ISO dates. */
+export interface IDocumentProfile extends IDocumentProfileInput {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** A document profile as stored in MongoDB (server only). */
+export interface IDocumentProfileRecord extends IDocumentProfileInput {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/** The form's values. Files are optional on edit, where the stored ones are kept. */
+export interface IDocumentProfileFormValues {
+  name: string;
+  image?: FileList;
+  adhaar?: FileList;
+  qualification?: FileList;
+  keptQualification: IStoredFile[];
+}
+
+export interface IActionResult<TData = undefined> {
+  success: boolean;
+  message: string;
+  data?: TData;
+}
+
 export interface ICompleteProfileForm extends Pick<
   ISignUpForm,
   "name" | "email" | "barId"
