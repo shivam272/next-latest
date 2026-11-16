@@ -32,35 +32,35 @@ export const DocumentProfileList = ({
 
   return (
     <ul className="space-y-4">
-      {profiles.map((profile) => (
-        <li key={profile.id} className="card bg-base-100 shadow-md">
+      {profiles.map(({ id, name, image, adhaar, qualification, updatedAt }) => (
+        <li key={id} className="card bg-base-100 shadow-md">
           <div className="card-body gap-4 sm:flex-row sm:items-start">
             <Image
-              src={profile.image.path}
-              alt={`${profile.name} photo`}
+              src={image.path}
+              alt={`${name} photo`}
               width={80}
               height={80}
-              className="h-20 w-20 shrink-0 rounded-lg object-cover"
+              className="size-20 shrink-0 rounded-lg object-cover"
             />
 
             <div className="min-w-0 flex-1 space-y-3 text-sm">
               <div>
-                <h2 className="text-lg font-semibold">{profile.name}</h2>
+                <h2 className="text-lg font-semibold">{name}</h2>
                 <p className="text-xs text-base-content/60">
-                  Updated {dateFormatter.format(new Date(profile.updatedAt))}
+                  Updated {dateFormatter.format(new Date(updatedAt))}
                 </p>
               </div>
               <dl className="grid gap-x-4 gap-y-2 sm:grid-cols-[auto_1fr]">
                 <dt className="font-medium">Aadhaar</dt>
                 <dd>
-                  <StoredFileLink file={profile.adhaar} />
+                  <StoredFileLink file={adhaar} />
                 </dd>
                 <dt className="font-medium">
-                  Qualification ({profile.qualification.length})
+                  Qualification ({qualification.length})
                 </dt>
                 <dd>
                   <ul className="space-y-1">
-                    {profile.qualification.map((file) => (
+                    {qualification.map((file) => (
                       <li key={file.path}>
                         <StoredFileLink file={file} />
                       </li>
@@ -72,15 +72,12 @@ export const DocumentProfileList = ({
 
             <div className="flex shrink-0 gap-2">
               <Link
-                href={DOCUMENT_PATHS.edit(profile.id)}
+                href={DOCUMENT_PATHS.edit(id)}
                 className="btn btn-outline btn-sm"
               >
                 Edit
               </Link>
-              <DeleteDocumentProfileButton
-                id={profile.id}
-                name={profile.name}
-              />
+              <DeleteDocumentProfileButton id={id} name={name} />
             </div>
           </div>
         </li>

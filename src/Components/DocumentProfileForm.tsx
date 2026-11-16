@@ -12,12 +12,13 @@ import {
   updateDocumentProfileAction,
   uploadDocumentFileAction,
 } from "@/actions/documentProfile.action";
-import { DOCUMENT_PATHS } from "@/constants";
 import {
   DOCUMENT_LIMITS,
+  DOCUMENT_PATHS,
+  DOCUMENT_UPLOAD_FORM_KEYS,
   FILE_INPUT_ACCEPT,
-  documentProfileClientSchema,
-} from "@/schema";
+} from "@/constants";
+import { documentProfileClientSchema } from "@/schema";
 import {
   EDocumentField,
   type IDocumentProfile,
@@ -86,8 +87,8 @@ export const DocumentProfileForm = ({ profile }: IDocumentProfileFormProps) => {
     ): Promise<IStoredFile> => {
       setStatus(`Uploading file ${uploadedPaths.length + 1} of ${totalFiles}…`);
       const formData = new FormData();
-      formData.append("field", field);
-      formData.append("file", file);
+      formData.append(DOCUMENT_UPLOAD_FORM_KEYS.field, field);
+      formData.append(DOCUMENT_UPLOAD_FORM_KEYS.file, file);
 
       const result = await uploadDocumentFileAction(formData);
       if (!result.success || !result.data) {
@@ -205,7 +206,7 @@ export const DocumentProfileForm = ({ profile }: IDocumentProfileFormProps) => {
                     alt={`${profile.name} photo`}
                     width={56}
                     height={56}
-                    className="h-14 w-14 rounded object-cover"
+                    className="size-14 rounded object-cover"
                   />
                   <span className="text-sm text-base-content/70">
                     Current image · {formatFileSize(profile.image.size)}
@@ -289,9 +290,9 @@ export const DocumentProfileForm = ({ profile }: IDocumentProfileFormProps) => {
               />
               {newQualificationFiles.length > 0 && (
                 <ul className="mt-2 space-y-1 text-sm text-base-content/70">
-                  {newQualificationFiles.map((file) => (
-                    <li key={`${file.name}-${file.size}`}>
-                      New: {file.name} · {formatFileSize(file.size)}
+                  {newQualificationFiles.map(({ name, size }) => (
+                    <li key={`${name}-${size}`}>
+                      New: {name} · {formatFileSize(size)}
                     </li>
                   ))}
                 </ul>

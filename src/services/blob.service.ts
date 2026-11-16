@@ -1,12 +1,13 @@
 import { del, put } from "@vercel/blob";
-import { BLOB_DOCUMENTS_FOLDER } from "@/schema";
+import {
+  BLOB_DOCUMENTS_FOLDER,
+  UNSAFE_FILE_NAME_CHARACTERS_REGEX,
+} from "@/constants";
 import { type EDocumentField, type IStoredFile } from "@/types";
-
-const UNSAFE_FILE_NAME_CHARACTERS = /[^\w.-]+/g;
 
 /** Keeps letters, digits, dot, dash and underscore, so the URL stays readable. */
 const toSafeFileName = (fileName: string): string =>
-  fileName.replace(UNSAFE_FILE_NAME_CHARACTERS, "-").toLowerCase();
+  fileName.replace(UNSAFE_FILE_NAME_CHARACTERS_REGEX, "-").toLowerCase();
 
 /**
  * Stores one file in Vercel Blob. A random suffix keeps two files with the
@@ -16,16 +17,17 @@ export const uploadToBlob = async (
   field: EDocumentField,
   file: File,
 ): Promise<IStoredFile> => {
-  const blob = await put(
-    `${BLOB_DOCUMENTS_FOLDER}/${field}/${toSafeFileName(file.name)}`,
+  const { name, type, size } = file;
+  const { url } = await put(
+    `${BLOB_DOCUMENTS_FOLDER}/${field}/${toSafeFileName(name)}`,
     file,
     {
       access: "public",
       addRandomSuffix: true,
-      contentType: file.type,
+      contentType: type,
     },
   );
-  return { path: blob.url, size: file.size };
+  return { path: url, size };
 };
 
 /**

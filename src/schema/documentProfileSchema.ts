@@ -1,57 +1,19 @@
 import { z } from "zod";
-import { MONGO_ID_REGEX } from "@/constants";
+import {
+  ACCEPTED_FILE_TYPES,
+  BLOB_DOCUMENTS_FOLDER,
+  BLOB_HOST_SUFFIX,
+  DOCUMENT_FIELD_LABELS,
+  DOCUMENT_FILE_RULES,
+  DOCUMENT_LIMITS,
+  DOCUMENT_VALIDATION_MESSAGES,
+  FILE_SIGNATURES,
+  MONGO_ID_REGEX,
+} from "@/constants";
 import { EDocumentField } from "@/types";
 
-export const DOCUMENT_LIMITS = {
-  maxFileBytes: 1024 * 1024,
-  maxQualificationFiles: 4,
-  nameMinLength: 2,
-  nameMaxLength: 100,
-} as const;
-
-/** The Vercel Blob folder these files live in; nothing outside it is accepted or deleted. */
-export const BLOB_DOCUMENTS_FOLDER = "documents";
-const BLOB_HOST_SUFFIX = ".public.blob.vercel-storage.com";
-
-/** What each field accepts. The image is a picture only (JPEG/JPG). */
-const ACCEPTED_FILE_TYPES: Record<EDocumentField, readonly string[]> = {
-  [EDocumentField.IMAGE]: ["image/jpeg"],
-  [EDocumentField.ADHAAR]: ["application/pdf"],
-  [EDocumentField.QUALIFICATION]: ["application/pdf"],
-};
-
-/** The `accept` attribute of each file input. */
-export const FILE_INPUT_ACCEPT: Record<EDocumentField, string> = {
-  [EDocumentField.IMAGE]: ".jpg,.jpeg,image/jpeg",
-  [EDocumentField.ADHAAR]: ".pdf,application/pdf",
-  [EDocumentField.QUALIFICATION]: ".pdf,application/pdf",
-};
-
-/** First bytes of each accepted format, so the server checks content, not the claimed type. */
-const FILE_SIGNATURES: Record<string, readonly number[]> = {
-  "image/jpeg": [0xff, 0xd8, 0xff],
-  "application/pdf": [0x25, 0x50, 0x44, 0x46], // "%PDF"
-};
-
-const FIELD_LABELS: Record<EDocumentField, string> = {
-  [EDocumentField.IMAGE]: "Image",
-  [EDocumentField.ADHAAR]: "Aadhaar",
-  [EDocumentField.QUALIFICATION]: "Qualification",
-};
-
-const FILE_RULES: Record<EDocumentField, string> = {
-  [EDocumentField.IMAGE]: "a JPEG or JPG image",
-  [EDocumentField.ADHAAR]: "a PDF",
-  [EDocumentField.QUALIFICATION]: "PDF files",
-};
-
-const QUALIFICATION_COUNT_MESSAGES = {
-  min: "Add at least one qualification PDF",
-  max: `Up to ${DOCUMENT_LIMITS.maxQualificationFiles} qualification PDFs in total`,
-} as const;
-
 const fileRuleMessage = (field: EDocumentField): string =>
-  `${FIELD_LABELS[field]} must be ${FILE_RULES[field]} of up to 1 MB`;
+  `${DOCUMENT_FIELD_LABELS[field]} must be ${DOCUMENT_FILE_RULES[field]} of up to 1 MB`;
 
 const isAcceptedFile = (field: EDocumentField, file: File): boolean =>
   file.size > 0 &&
@@ -61,19 +23,13 @@ const isAcceptedFile = (field: EDocumentField, file: File): boolean =>
 const nameSchema = z
   .string()
   .trim()
-  .min(
-    DOCUMENT_LIMITS.nameMinLength,
-    `Name must be at least ${DOCUMENT_LIMITS.nameMinLength} characters`,
-  )
-  .max(
-    DOCUMENT_LIMITS.nameMaxLength,
-    `Name must be at most ${DOCUMENT_LIMITS.nameMaxLength} characters`,
-  );
+  .min(DOCUMENT_LIMITS.nameMinLength, DOCUMENT_VALIDATION_MESSAGES.nameTooShort)
+  .max(DOCUMENT_LIMITS.nameMaxLength, DOCUMENT_VALIDATION_MESSAGES.nameTooLong);
 
 const fileListSchema = z
   .custom<FileList>(
     (value) => typeof FileList !== "undefined" && value instanceof FileList,
-    { message: "Invalid file input" },
+    { message: DOCUMENT_VALIDATION_MESSAGES.invalidFileInput },
   )
   .optional();
 
@@ -92,50 +48,56 @@ export const documentProfileClientSchema = (isEdit: boolean) =>
         z.object({ path: z.string(), size: z.number() }),
       ),
     })
-    .superRefine((values, context) => {
-      const addIssue = (field: EDocumentField, message: string) =>
-        context.addIssue({ code: "custom", path: [field], message });
+    .superRefine(
+      ({ image, adhaar, qualification, keptQualification }, context) => {
+        const addIssue = (field: EDocumentField, message: string) =>
+          context.addIssue({ code: "custom", path: [field], message });
 
-      for (const field of [EDocumentField.IMAGE, EDocumentField.ADHAAR]) {
-        const files = values[field];
-        if (!files?.length) {
-          if (!isEdit) {
-            addIssue(field, `${FIELD_LABELS[field]} is required`);
+        const singleFiles = [
+          { field: EDocumentField.IMAGE, files: image },
+          { field: EDocumentField.ADHAAR, files: adhaar },
+        ];
+        for (const { field, files } of singleFiles) {
+          if (!files?.length) {
+            if (!isEdit) {
+              addIssue(field, `${DOCUMENT_FIELD_LABELS[field]} is required`);
+            }
+          } else if (files.length > 1 || !isAcceptedFile(field, files[0])) {
+            addIssue(field, fileRuleMessage(field));
           }
-        } else if (files.length > 1 || !isAcceptedFile(field, files[0])) {
-          addIssue(field, fileRuleMessage(field));
         }
-      }
 
-      const newFiles = Array.from(values.qualification ?? []);
-      const total = values.keptQualification.length + newFiles.length;
-      if (
-        newFiles.some(
-          (file) => !isAcceptedFile(EDocumentField.QUALIFICATION, file),
-        )
-      ) {
-        addIssue(
-          EDocumentField.QUALIFICATION,
-          fileRuleMessage(EDocumentField.QUALIFICATION),
-        );
-      } else if (total < 1) {
-        addIssue(
-          EDocumentField.QUALIFICATION,
-          QUALIFICATION_COUNT_MESSAGES.min,
-        );
-      } else if (total > DOCUMENT_LIMITS.maxQualificationFiles) {
-        addIssue(
-          EDocumentField.QUALIFICATION,
-          QUALIFICATION_COUNT_MESSAGES.max,
-        );
-      }
-    });
+        const newFiles = Array.from(qualification ?? []);
+        const total = keptQualification.length + newFiles.length;
+        if (
+          newFiles.some(
+            (file) => !isAcceptedFile(EDocumentField.QUALIFICATION, file),
+          )
+        ) {
+          addIssue(
+            EDocumentField.QUALIFICATION,
+            fileRuleMessage(EDocumentField.QUALIFICATION),
+          );
+        } else if (total < 1) {
+          addIssue(
+            EDocumentField.QUALIFICATION,
+            DOCUMENT_VALIDATION_MESSAGES.qualificationRequired,
+          );
+        } else if (total > DOCUMENT_LIMITS.maxQualificationFiles) {
+          addIssue(
+            EDocumentField.QUALIFICATION,
+            DOCUMENT_VALIDATION_MESSAGES.tooManyQualifications,
+          );
+        }
+      },
+    );
 
 const hasFileSignature = async (file: File): Promise<boolean> => {
   const signature = FILE_SIGNATURES[file.type];
   if (!signature) {
     return false;
   }
+  // `slice` is a method of File, so it is called on the file, not destructured.
   const head = new Uint8Array(
     await file.slice(0, signature.length).arrayBuffer(),
   );
@@ -146,7 +108,9 @@ const hasFileSignature = async (file: File): Promise<boolean> => {
 export const documentFileServerSchema = z
   .object({
     field: z.enum(EDocumentField),
-    file: z.instanceof(File, { message: "Choose a file to upload" }),
+    file: z.instanceof(File, {
+      message: DOCUMENT_VALIDATION_MESSAGES.fileRequired,
+    }),
   })
   .superRefine(async ({ field, file }, context) => {
     if (!isAcceptedFile(field, file) || !(await hasFileSignature(file))) {
@@ -174,7 +138,7 @@ const isDocumentBlobUrl = (value: string): boolean => {
 /** A saved file reference must point into this feature's Blob folder. */
 export const blobPathSchema = z
   .string()
-  .refine(isDocumentBlobUrl, "File must be stored in Vercel Blob");
+  .refine(isDocumentBlobUrl, DOCUMENT_VALIDATION_MESSAGES.notInBlob);
 
 const storedFileServerSchema = z.object({
   path: blobPathSchema,
@@ -188,13 +152,13 @@ export const documentProfileServerSchema = z.object({
   adhaar: storedFileServerSchema,
   qualification: z
     .array(storedFileServerSchema)
-    .min(1, QUALIFICATION_COUNT_MESSAGES.min)
+    .min(1, DOCUMENT_VALIDATION_MESSAGES.qualificationRequired)
     .max(
       DOCUMENT_LIMITS.maxQualificationFiles,
-      QUALIFICATION_COUNT_MESSAGES.max,
+      DOCUMENT_VALIDATION_MESSAGES.tooManyQualifications,
     ),
 });
 
 export const documentProfileIdSchema = z
   .string()
-  .regex(MONGO_ID_REGEX, "Invalid document profile id");
+  .regex(MONGO_ID_REGEX, DOCUMENT_VALIDATION_MESSAGES.invalidId);

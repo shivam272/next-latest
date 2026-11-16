@@ -6,16 +6,18 @@ interface IStoredFileLinkProps {
 }
 
 /** A stored file as "name.pdf · 54 KB", opening in a new tab. */
-export const StoredFileLink = ({ file }: IStoredFileLinkProps) => (
+export const StoredFileLink = ({
+  file: { path, size },
+}: IStoredFileLinkProps) => (
   <span>
     <a
-      href={file.path}
+      href={path}
       target="_blank"
       rel="noreferrer"
       className="link link-primary break-all"
     >
-      {getFileNameFromPath(file.path)}
+      {getFileNameFromPath(path)}
     </a>
-    <span className="text-base-content/60"> · {formatFileSize(file.size)}</span>
+    <span className="text-base-content/60"> · {formatFileSize(size)}</span>
   </span>
 );

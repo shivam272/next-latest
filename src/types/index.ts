@@ -167,10 +167,18 @@ export interface IDocumentProfileInput {
   qualification: IStoredFile[];
 }
 
+/** A document profile as it reaches the client: `id`, ISO dates. */
 export interface IDocumentProfile extends IDocumentProfileInput {
   id: string;
   createdAt: string;
   updatedAt: string;
+}
+
+/** A document profile as stored in MongoDB (server only). */
+export interface IDocumentProfileRecord extends IDocumentProfileInput {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 /** The form's values. Files are optional on edit, where the stored ones are kept. */

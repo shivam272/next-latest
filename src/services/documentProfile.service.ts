@@ -1,41 +1,45 @@
-import { type Types } from "mongoose";
 import { connectToDatabase } from "@/lib/mongoose";
 import DocumentProfile from "@/models/documentProfile";
 import {
   type IDocumentProfile,
   type IDocumentProfileInput,
+  type IDocumentProfileRecord,
   type IStoredFile,
 } from "@/types";
 import { deleteFromBlobQuietly } from "./blob.service";
-
-interface IDocumentProfileRecord extends IDocumentProfileInput {
-  _id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 const toStoredFile = ({ path, size }: IStoredFile): IStoredFile => ({
   path,
   size,
 });
 
-const toDocumentProfile = (
-  record: IDocumentProfileRecord,
-): IDocumentProfile => ({
-  id: record._id.toString(),
-  name: record.name,
-  image: toStoredFile(record.image),
-  adhaar: toStoredFile(record.adhaar),
-  qualification: record.qualification.map(toStoredFile),
-  createdAt: record.createdAt.toISOString(),
-  updatedAt: record.updatedAt.toISOString(),
+const toDocumentProfile = ({
+  _id,
+  name,
+  image,
+  adhaar,
+  qualification,
+  createdAt,
+  updatedAt,
+}: IDocumentProfileRecord): IDocumentProfile => ({
+  id: _id.toString(),
+  name,
+  image: toStoredFile(image),
+  adhaar: toStoredFile(adhaar),
+  qualification: qualification.map(toStoredFile),
+  createdAt: createdAt.toISOString(),
+  updatedAt: updatedAt.toISOString(),
 });
 
 /** Every Blob URL a profile points to. */
-const getFilePaths = (profile: IDocumentProfileInput): string[] => [
-  profile.image.path,
-  profile.adhaar.path,
-  ...profile.qualification.map(({ path }) => path),
+const getFilePaths = ({
+  image,
+  adhaar,
+  qualification,
+}: IDocumentProfileInput): string[] => [
+  image.path,
+  adhaar.path,
+  ...qualification.map(({ path }) => path),
 ];
 
 export const createDocumentProfile = async (

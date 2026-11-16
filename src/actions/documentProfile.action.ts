@@ -2,9 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { DOCUMENT_PATHS } from "@/constants";
 import {
-  DOCUMENT_LIMITS,
+  DOCUMENT_ACTION_MESSAGES,
+  DOCUMENT_PATHS,
+  DOCUMENT_UPLOAD_FORM_KEYS,
+  MAX_FILES_PER_FORM,
+} from "@/constants";
+import {
   blobPathSchema,
   documentFileServerSchema,
   documentProfileIdSchema,
@@ -24,23 +28,8 @@ import {
   type IStoredFile,
 } from "@/types";
 
-/** The most files one form can upload: image, Aadhaar and the qualifications. */
-const MAX_FILES_PER_FORM = 2 + DOCUMENT_LIMITS.maxQualificationFiles;
-
-const MESSAGES = {
-  uploaded: "File uploaded",
-  uploadFailed: "Could not upload the file. Please try again.",
-  created: "Documents saved",
-  updated: "Documents updated",
-  deleted: "Documents deleted",
-  notFound: "These documents no longer exist",
-  invalid: "Please check the details and try again.",
-  saveFailed: "Could not save the documents. Please try again.",
-  deleteFailed: "Could not delete the documents. Please try again.",
-} as const;
-
-const firstIssue = (error: z.ZodError): string =>
-  error.issues[0]?.message ?? MESSAGES.invalid;
+const firstIssue = ({ issues }: z.ZodError): string =>
+  issues[0]?.message ?? DOCUMENT_ACTION_MESSAGES.invalid;
 
 /**
  * Step 1 of a submit: the server checks one file with Zod (type from its
@@ -51,19 +40,24 @@ export const uploadDocumentFileAction = async (
   formData: FormData,
 ): Promise<IActionResult<IStoredFile>> => {
   const result = await documentFileServerSchema.safeParseAsync({
-    field: formData.get("field"),
-    file: formData.get("file"),
+    field: formData.get(DOCUMENT_UPLOAD_FORM_KEYS.field),
+    file: formData.get(DOCUMENT_UPLOAD_FORM_KEYS.file),
   });
   if (!result.success) {
     return { success: false, message: firstIssue(result.error) };
   }
 
+  const { field, file } = result.data;
   try {
-    const stored = await uploadToBlob(result.data.field, result.data.file);
-    return { success: true, message: MESSAGES.uploaded, data: stored };
+    const stored = await uploadToBlob(field, file);
+    return {
+      success: true,
+      message: DOCUMENT_ACTION_MESSAGES.uploaded,
+      data: stored,
+    };
   } catch (error) {
     console.error("Vercel Blob upload failed", error);
-    return { success: false, message: MESSAGES.uploadFailed };
+    return { success: false, message: DOCUMENT_ACTION_MESSAGES.uploadFailed };
   }
 };
 
@@ -79,10 +73,14 @@ export const createDocumentProfileAction = async (
   try {
     const profile = await createDocumentProfile(result.data);
     revalidatePath(DOCUMENT_PATHS.list);
-    return { success: true, message: MESSAGES.created, data: profile };
+    return {
+      success: true,
+      message: DOCUMENT_ACTION_MESSAGES.created,
+      data: profile,
+    };
   } catch (error) {
     console.error("Saving document profile failed", error);
-    return { success: false, message: MESSAGES.saveFailed };
+    return { success: false, message: DOCUMENT_ACTION_MESSAGES.saveFailed };
   }
 };
 
@@ -103,13 +101,17 @@ export const updateDocumentProfileAction = async (
   try {
     const profile = await updateDocumentProfile(idResult.data, result.data);
     if (!profile) {
-      return { success: false, message: MESSAGES.notFound };
+      return { success: false, message: DOCUMENT_ACTION_MESSAGES.notFound };
     }
     revalidatePath(DOCUMENT_PATHS.list);
-    return { success: true, message: MESSAGES.updated, data: profile };
+    return {
+      success: true,
+      message: DOCUMENT_ACTION_MESSAGES.updated,
+      data: profile,
+    };
   } catch (error) {
     console.error("Updating document profile failed", error);
-    return { success: false, message: MESSAGES.saveFailed };
+    return { success: false, message: DOCUMENT_ACTION_MESSAGES.saveFailed };
   }
 };
 
@@ -124,13 +126,13 @@ export const deleteDocumentProfileAction = async (
   try {
     const deleted = await deleteDocumentProfile(idResult.data);
     if (!deleted) {
-      return { success: false, message: MESSAGES.notFound };
+      return { success: false, message: DOCUMENT_ACTION_MESSAGES.notFound };
     }
     revalidatePath(DOCUMENT_PATHS.list);
-    return { success: true, message: MESSAGES.deleted };
+    return { success: true, message: DOCUMENT_ACTION_MESSAGES.deleted };
   } catch (error) {
     console.error("Deleting document profile failed", error);
-    return { success: false, message: MESSAGES.deleteFailed };
+    return { success: false, message: DOCUMENT_ACTION_MESSAGES.deleteFailed };
   }
 };
 
